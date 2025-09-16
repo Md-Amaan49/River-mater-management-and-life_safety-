@@ -1,0 +1,74 @@
+.core-dam-info {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: var(--bg-color, #ffffff);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  font-family: 'Segoe UI', sans-serif;
+  transition: background-color 0.3s ease;
+}
+
+.core-dam-info h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 28px;
+  color: var(--text-color, #222);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 12px 10px;
+  vertical-align: top;
+}
+
+td strong {
+  display: inline-block;
+  width: 180px;
+  color: var(--label-color, #333);
+  font-weight: 500;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: var(--input-bg, #f9f9f9);
+  color: var(--input-text, #000);
+  transition: border 0.3s;
+}
+
+input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.update-button {
+  display: block;
+  margin: 30px auto 0;
+  padding: 12px 24px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.update-button:hover {
+  background-color: #0056b3;
+}
+
+.status-message {
+  text-align: center;
+  margin-bottom: 15px;
+  color: green;
+  font-weight: bold;
+}

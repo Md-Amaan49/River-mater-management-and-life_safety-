@@ -1,0 +1,131 @@
+/* frontend/src/styles/Contact.css */
+
+.contact-page {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #f1f5f9;
+  min-height: 100vh;
+  padding: 2rem;
+  font-family: "Segoe UI", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-content {
+  max-width: 800px;
+  width: 100%;
+  background: rgba(30, 41, 59, 0.85); /* glassy dark background */
+  padding: 2.5rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  animation: fadeInUp 0.8s ease-in-out;
+  z-index: 2;
+}
+
+.contact-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  color: #38bdf8; /* cyan highlight */
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+}
+
+.contact-content p {
+  font-size: 1.1rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #e2e8f0;
+}
+
+/* Contact Form */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 0.9rem 1.2rem;
+  border-radius: 0.8rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: #0f172a;
+  color: #f1f5f9;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+}
+
+.contact-form button {
+  background: #38bdf8;
+  color: #0f172a;
+  border: none;
+  padding: 0.9rem;
+  border-radius: 0.8rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.contact-form button:hover {
+  background: #0ea5e9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(14, 165, 233, 0.5);
+}
+
+/* Contact Info Section */
+.contact-info {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #1e293b;
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  animation: fadeInCard 1s ease forwards;
+}
+
+.contact-info h2 {
+  font-size: 1.3rem;
+  margin: 1rem 0 0.5rem;
+  color: #facc15; /* yellow accent */
+}
+
+.contact-info p {
+  font-size: 1rem;
+  color: #cbd5e1;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInCard {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .contact-content {
+    padding: 1.5rem;
+  }
+
+  .contact-content h1 {
+    font-size: 2rem;
+  }
+
+  .contact-form button {
+    font-size: 1rem;
+  }
+}

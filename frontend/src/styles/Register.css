@@ -1,0 +1,78 @@
+/* Register.css */
+
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #0a192f, #112d4e);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #e0f2ff;
+  min-height: 100vh;
+}
+
+.register-container {
+  max-width: 420px;
+  margin: 70px auto;
+  background: rgba(20, 40, 80, 0.8);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 50, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+.register-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #00cfff;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.register-container .error {
+  color: #ff5c5c;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.register-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.register-container input,
+.register-container select {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #1c2f4a;
+  color: #e0f2ff;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.register-container input:focus,
+.register-container select:focus {
+  border: 1px solid #00cfff;
+  box-shadow: 0 0 8px #00cfff;
+  background: #22395e;
+}
+
+.register-container button {
+  background: linear-gradient(135deg, #00cfff, #0077ff);
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+}
+
+.register-container button:hover {
+  background: linear-gradient(135deg, #0099ff, #0055cc);
+  box-shadow: 0 5px 15px rgba(0, 150, 255, 0.6);
+  transform: translateY(-2px);
+}

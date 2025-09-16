@@ -1,0 +1,146 @@
+/* Safety.css */
+.safe-container {
+  max-width: 1100px;
+  margin: 0px auto;
+  padding: 25px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.safe-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.safe-header h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #3498db;
+}
+
+.risk-pill {
+  padding: 8px 18px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.risk-pill.green {
+  background: #27ae60;
+}
+.risk-pill.yellow {
+  background: #f1c40f;
+  color: #222;
+}
+.risk-pill.orange {
+  background: #e67e22;
+}
+.risk-pill.red {
+  background: #e74c3c;
+}
+
+.safe-section {
+  margin-bottom: 25px;
+}
+
+.safe-section h3 {
+  font-size: 1.3rem;
+  color: #d6dfe8;
+  margin-bottom: 12px;
+}
+
+.safe-section input,
+.safe-section select,
+.safe-section textarea {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border: 1px solid #0b0a0a;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border 0.2s ease;
+}
+
+.safe-section input:focus,
+.safe-section select:focus,
+.safe-section textarea:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  margin-top: -8px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 18px;
+}
+
+.card {
+  background: #21354a;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #232d3b;
+}
+
+.card label {
+  display: block;
+  background: #21354a;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #fafafa;
+}
+
+.card small {
+  font-size: 0.8rem;
+  color: #fbfbfb;
+}
+
+.safe-status {
+  margin: 18px 0;
+  padding: 12px;
+  border-radius: 8px;
+  background: #ecf0f1;
+  font-weight: 600;
+  text-align: center;
+  color: #f7f9fb;
+}
+
+.safe-actions {
+  text-align: right;
+  margin-top: 20px;
+}
+
+.btn.primary {
+  padding: 12px 22px;
+  background: #3498db;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn.primary:hover {
+  background: #2980b9;
+}
+
+.btn.primary:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+}

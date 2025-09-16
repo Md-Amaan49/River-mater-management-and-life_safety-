@@ -1,0 +1,112 @@
+/* WaterLevel.css */
+.waterlevel-page {
+  padding: 20px;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: #111827;
+}
+
+/* Top buttons row */
+.top-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.top-buttons button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: #f3f4f6;
+  cursor: pointer;
+}
+.top-buttons button.active {
+  background: #2563eb;
+  color: #fff;
+}
+.top-buttons .right-actions { margin-left: auto; }
+.secret-filter {
+  background: #111827;
+  color: #010101;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Sections */
+.section { margin-top: 12px; }
+.section-title { font-size: 20px; margin-bottom: 12px; color: #2563eb; }
+
+/* not logged in box */
+.not-logged {
+  padding: 18px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px dashed #e5e7eb;
+}
+.auth-buttons { margin-top: 10px; display:flex; gap: 8px; background-color: #344054; }
+.btn { padding: 8px 12px; border-radius: 8px; border: none; background: #2563eb; color: #fff; cursor: pointer; }
+.btn-outline { background: transparent; border: 1px solid #2563eb; color: #2563eb; }
+
+/* Filters */
+.filters { display:flex; gap:12px; margin-bottom: 14px; align-items:center;  }
+.filters select { padding: 8px 10px; border-radius: 8px; border: 1px solid #82a4e8; background: #1b263b; }
+
+/* Grid of dam cards */
+.dam-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* Dam Card */
+.dam-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 6px 18px rgba(16,24,40,0.04);
+  border: 1px solid #e6edf8;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+.dam-card-top { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+.dam-path { font-size: 14px; color: #344054; }
+.save-btn { border: none; background: transparent; font-size: 20px; cursor:pointer; color: #9ca3af; }
+.save-btn.saved { color: #f59e0b; }
+
+/* Charts row */
+.charts-row { display:flex; gap: 12px; align-items: center; justify-content: space-between; padding-left: 30px; padding-right: 30px; }
+.chart-block { width: 120px; display:flex; flex-direction: column; align-items:center; gap:6px; }
+
+/* labels under charts */
+.chart-label { font-size: 12px; color: #374151; min-height: 16px; text-align:center; }
+
+/* Footer row */
+.card-footer { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:6px; }
+.flag { padding: 6px 8px; border-radius: 8px; font-weight:600; font-size:18px; }
+.flag-red { background: #ef4444; color: white; }
+.flag-yellow { background: #f59e0b; color: black; }
+.flag-green { background: #10b981; color: white; }
+
+.view-btn { background: #2563eb; color:#fff; padding:6px 10px; border-radius:8px; border:none; cursor:pointer; }
+
+/* empty state */
+.no-dams { padding: 18px; border-radius: 8px; text-align:center; color: #6b7280; }
+
+/* small loading */
+.loading { padding: 8px 0; color: #6b7280; }
+.page-title {
+  font-size: 2.2rem;
+  font-weight: bold;
+  text-align: left;
+  margin-bottom: 1.5rem;
+  color: #38bdf8; /* cyan highlight */
+
+  animation: fadeInDown 0.7s ease-in-out;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

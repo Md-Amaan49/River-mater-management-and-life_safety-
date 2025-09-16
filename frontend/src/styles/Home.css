@@ -1,0 +1,111 @@
+:root{
+  --bg: #0b1522;         /* deep river blue */
+  --panel: #0f2234;      /* card bg */
+  --panel-2: #132a40;    /* hover bg */
+  --text: #e6f0ff;
+  --muted: #b9c7d8;
+  --teal: #2db3b0;
+  --orange: #ff7a38;
+}
+
+.home{
+  min-height:100vh;
+  background: radial-gradient(60% 80% at 10% 10%, #0d2138 0%, #09131e 80%), var(--bg);
+  color: var(--text);
+  display:flex;
+  flex-direction:column;
+}
+
+/* HERO */
+.home-hero{
+  position:relative;
+  min-height:58vh;
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+}
+.home-hero__overlay{
+  position:relative;
+  z-index:1;
+  padding:7rem 2rem 5rem;
+  max-width:1200px;
+  margin:0 auto;
+}
+.home-hero::before{
+  content:"";
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.55) 40%, rgba(0,0,0,.65) 100%);
+}
+.home-title{
+  font-size: clamp(1.8rem, 3.6vw, 3.2rem);
+  font-weight:800;
+  line-height:1.15;
+  letter-spacing:.02em;
+  margin:0 0 1.5rem;
+}
+.cta{
+  background:#1f6b6a;
+  border:none;
+  color:#e8ffff;
+  padding:.9rem 1.4rem;
+  border-radius:.6rem;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 10px 24px rgba(0,0,0,.35);
+  transition:transform .2s ease, background .2s ease;
+}
+.cta:hover{ transform:translateY(-2px); background:#22807f; }
+
+/* CARDS */
+.home-cards{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:1.25rem;
+  padding:2rem;
+  max-width:1200px;
+  margin:-60px auto 3rem; /* pull up into hero like the mock */
+}
+@media (max-width: 1024px){
+  .home-cards{ grid-template-columns:repeat(2, 1fr); }
+}
+@media (max-width: 560px){
+  .home-cards{ grid-template-columns:1fr; }
+}
+
+.card{
+  background: rgba(11, 24, 38, .86);
+  backdrop-filter: blur(2px);
+  border-radius:14px;
+  padding:1.6rem 1.4rem;
+  box-shadow:0 12px 32px rgba(0,0,0,.45);
+  border:1px solid rgba(255,255,255,.05);
+  transition: transform .25s ease, background .25s ease, border-color .25s ease;
+  text-align:left;
+}
+.card:hover{
+  transform: translateY(-6px);
+  background: rgba(15, 34, 52, .94);
+  border-color: rgba(255,255,255,.08);
+}
+
+.icon{
+  width:44px;
+  height:44px;
+  display:block;
+  margin-bottom:.9rem;
+}
+.icon.teal{ color: var(--teal); }
+.icon.orange{ color: var(--orange); }
+
+.card h3{
+  margin:0 0 .35rem;
+  font-size:1.25rem;
+  font-weight:800;
+  letter-spacing:.3px;
+}
+.card p{
+  margin:0;
+  color: var(--muted);
+  font-size:.97rem;
+  line-height:1.35;
+}

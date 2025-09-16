@@ -1,0 +1,118 @@
+/* RealtimeDamStatus.css */
+
+/* Page container */
+.p-6 {
+  max-width: 800px;
+  margin: 0px auto;
+  padding: 30px;
+  background: rgba(15, 25, 45, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Heading */
+.p-6 h2 {
+  font-size: 26px;
+  font-weight: bold;
+  color: #00c2ff;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Sub heading */
+.p-6 h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #00e0ff;
+}
+
+/* Info / Messages */
+.p-6 p {
+  text-align: center;
+  font-size: 15px;
+  margin-bottom: 16px;
+  color: #a3e3ff;
+}
+
+/* Form grid box */
+.grid {
+  display: grid;
+  gap: 18px;
+  background: #1a2d4d;
+  padding: 22px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+}
+
+/* Labels */
+label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  font-weight: 600;
+  color: #cce6ff;
+}
+
+/* Inputs & Select */
+input,
+select {
+  margin-top: 6px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #243b63;
+  color: #ffffff;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+input:focus,
+select:focus {
+  background: #2f4c7a;
+  border: 1px solid #00c2ff;
+}
+
+/* Save button */
+.update-button {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #0077ff, #00c2ff);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+  text-align: center;
+}
+
+.update-button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(90deg, #0055cc, #00aadd);
+}
+
+/* Latest Status Section */
+.mt-8 {
+  margin-top: 32px;
+  background: #0e1629;
+  padding: 18px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Code block for JSON */
+pre {
+  background: #1b2d4d;
+  padding: 16px;
+  border-radius: 8px;
+  color: #d6f1ff;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  max-height: 300px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
