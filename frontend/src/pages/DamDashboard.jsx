@@ -20,10 +20,10 @@ import {
 } from "recharts";
 import "../styles/DamDashboard.css";
 
-const DAM_API = "http://localhost:5000/api/dam";
-const DATA_API = "http://localhost:5000/api/data";
-const USAGE_API = "http://localhost:5000/api/water-usage";
-const SENSORS_API = "http://localhost:5000/api/sensors";
+const DAM_API = "https://river-water-management-and-life-safety.onrender.com/dam";
+const DATA_API = "https://river-water-management-and-life-safety.onrender.com/api/data";
+const USAGE_API = "https://river-water-management-and-life-safety.onrender.com/water-usage";
+const SENSORS_API = "https://river-water-management-and-life-safety.onrender.com/api/sensors";
 
 // Compact Card
 const Card = ({ title, children, className = "" }) => (

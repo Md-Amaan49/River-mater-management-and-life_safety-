@@ -93,7 +93,7 @@ const ProfilePage = () => {
       {/* Top Profile Info */}
       <div className="profile-header">
           <img 
-            src={`http://localhost:5000${user.profileImage}`} 
+            src={`https://river-water-management-and-life-safety.onrender.com${user.profileImage}`} 
             alt="Profile" 
             style={{ width: "100px", height: "100px", borderRadius: "50%" }} 
           />

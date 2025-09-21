@@ -14,7 +14,7 @@ const LoginPage = () => {
     setErr("");
 
     try {
-      const res = await axios.post("http://localhost:5000/api/users/login", {
+      const res = await axios.post("https://river-water-management-and-life-safety.onrender.com/api/users/login", {
         email,
         password,
       });
