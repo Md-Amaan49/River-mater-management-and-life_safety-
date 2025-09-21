@@ -17,7 +17,7 @@ import Features from "./components/Features";
 import Home from "./pages/Home";
 import WaterLevel from "./pages/WaterLevel";
 import WaterUsagePage from "./pages/WaterUsagePage";
-import AlertPage from "./pages/Alertpage";
+import Alertpage from "./pages/Alertpage";
 import Layout from "./components/Layout";
 import DamDashboard from "./pages/DamDashboard";
 import About from "./pages/About";
@@ -45,7 +45,7 @@ function App() {
       <Route path="*" element={<p>404 Not Found</p>} />
       <Route path="/govt-dashboard" element={<ProtectedRoute requiredRole="govt"><GovtDashboard /></ProtectedRoute>} />
       <Route path="/water-levels" element={<Layout><WaterLevel /></Layout>} />
-      <Route path="/alerts" element={<Layout><AlertPage /></Layout>} />
+      <Route path="/alerts" element={<Layout><Alertpage /></Layout>} />
       <Route path="/water-usage" element={<Layout><WaterUsagePage /></Layout>} />
       <Route path="/dam-dashboard/:damId" element={<Layout><DamDashboard /></Layout>} />
       <Route path="/about" element={<Layout><About /></Layout>} />
