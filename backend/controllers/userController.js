@@ -20,17 +20,58 @@ export const registerUser = async (req, res) => {
   try {
     const { name, email, password, mobile, place, state, role } = req.body;
 
+    // Enhanced validation
     if (!name || !email || !password || !mobile || !place || !state) {
       return res
         .status(400)
         .json({ success: false, message: "Please fill all required fields" });
     }
 
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Please enter a valid email address" });
+    }
+
+    // Password strength validation
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Password must be at least 6 characters long" });
+    }
+
+    // Mobile number validation (Indian format)
+    const mobileRegex = /^[6-9]\d{9}$/;
+    if (!mobileRegex.test(mobile)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Please enter a valid 10-digit mobile number" });
+    }
+
+    // Name validation (no numbers or special characters)
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!nameRegex.test(name)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Name should contain only letters and spaces" });
+    }
+
+    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res
         .status(400)
-        .json({ success: false, message: "User already exists" });
+        .json({ success: false, message: "User already exists with this email" });
+    }
+
+    // Check if mobile number already exists
+    const existingMobile = await User.findOne({ mobile });
+    if (existingMobile) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Mobile number already registered" });
     }
 
     const profileImagePath = req.file ? `/uploads/${req.file.filename}` : null;
@@ -72,20 +113,38 @@ export const registerUser = async (req, res) => {
 // LOGIN
 export const login = async (req, res) => {
   const { email, password } = req.body;
+  
   try {
+    // Input validation
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Please provide email and password" });
+    }
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Please enter a valid email address" });
+    }
+
     const user = await User.findOne({ email });
     if (!user || !(await user.comparePassword(password))) {
       return res
         .status(400)
-        .json({ success: false, message: "Invalid credentials" });
+        .json({ success: false, message: "Invalid email or password" });
     }
-      const accessToken = generateToken(user);
+
+    const accessToken = generateToken(user);
     const refreshToken = generateRefreshToken(user);
 
     res.json({
       success: true,
       message: "Login successful",
-      token: generateToken(user),
+      token: accessToken,
+      refreshToken: refreshToken,
       user: {
         id: user._id,
         name: user.name,
@@ -98,7 +157,8 @@ export const login = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    console.error("Login error:", err);
+    res.status(500).json({ success: false, message: "Server error during login" });
   }
 };
 

@@ -85,7 +85,8 @@ const AddDataForm = () => {
     { id: 4, icon: "🛰️", title: "Sensor & Telemetry Integration" },
     { id: 5, icon: "📁", title: "Supporting Information" },
     { id: 6, icon: "🔧", title: "Optional Advanced Features" },
-    { id: 7, icon: "🚨", title: "Safety & Alert System" }
+    { id: 7, icon: "🚨", title: "Safety & Alert System" },
+    { id: 8, icon: "📋", title: "Admin Data Management" }
   ];
 
   const handleCardClick = (cardId) => {
@@ -109,6 +110,9 @@ const AddDataForm = () => {
     }
     else if (cardId === 7 && selectedDam) {
       navigate(`/safety/${selectedDam}`);
+    }
+    else if (cardId === 8 && selectedDam) {
+      navigate(`/admin-data/${selectedDam}`);
     }
     else {
       console.log(`Feature ${cardId} clicked`);

@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useState, useRef } from "react";
 import axios from "axios";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
 import "../styles/AlertPage.css";
 import { useNavigate } from "react-router-dom";
 
@@ -9,6 +7,7 @@ const BASE_API = "http://localhost:5000/api";     // server base
 const DATA_API = `${BASE_API}/data`;               // states/rivers/dams endpoints
 const USER_API = `${BASE_API}/users`;              // saved-dams endpoint
 const SAFETY_API = `${BASE_API}/safety`;           // safety endpoints
+const STATUS_API = `${BASE_API}/data`;             // dam status endpoints
 
 // clamp 0..100
 const clampPct = (v) => {
@@ -17,8 +16,8 @@ const clampPct = (v) => {
 };
 
 // compute three safety-related metrics for circular widgets
-function computeSafetyMetrics(safety) {
-  if (!safety) {
+function computeSafetyMetrics(safety, damStatus, damCore) {
+  if (!safety && !damStatus) {
     return {
       riskPct: 0, riskLabel: "—",
       structPct: 0, structLabel: "—",
@@ -27,56 +26,149 @@ function computeSafetyMetrics(safety) {
     };
   }
 
-  // Flood Risk mapping
-  const riskMap = { Green: 20, Yellow: 65, Red: 100 };
-  const riskLevel = (safety.floodRiskLevel || "Green");
-  const riskPct = clampPct(riskMap[riskLevel] ?? 0);
-  const riskLabel = riskLevel;
+  // Enhanced Flood Risk calculation using real-time water level data
+  let riskPct = 0;
+  let riskLabel = "Green";
+  let alert = "green";
+
+  if (damStatus && damCore) {
+    // Calculate water level percentage
+    const currentLevel = damStatus.currentWaterLevel || 0;
+    const maxLevel = damStatus.maxLevel || damCore.maxStorage || 100;
+    const minLevel = damStatus.minLevel || 0;
+    
+    let waterLevelPct = 0;
+    if (damStatus.levelUnit === "%") {
+      waterLevelPct = currentLevel;
+    } else {
+      // Convert meters to percentage based on capacity
+      waterLevelPct = maxLevel > minLevel ? 
+        ((currentLevel - minLevel) / (maxLevel - minLevel)) * 100 : 0;
+    }
+    
+    // Calculate inflow/outflow ratio risk
+    const inflowRate = damStatus.inflowRate || 0;
+    const outflowRate = damStatus.outflowRate || 0;
+    const flowRatio = outflowRate > 0 ? inflowRate / outflowRate : inflowRate > 0 ? 2 : 1;
+    
+    // Base risk calculation on water level percentage
+    let baseRisk = 0;
+    if (waterLevelPct >= 90) {
+      baseRisk = 85; // Very high water level
+    } else if (waterLevelPct >= 80) {
+      baseRisk = 65; // High water level
+    } else if (waterLevelPct >= 70) {
+      baseRisk = 45; // Moderate water level
+    } else if (waterLevelPct >= 50) {
+      baseRisk = 25; // Normal water level
+    } else {
+      baseRisk = 10; // Low water level
+    }
+    
+    // Adjust risk based on inflow/outflow ratio
+    if (flowRatio > 1.5) {
+      baseRisk += 15; // Inflow significantly higher than outflow
+    } else if (flowRatio > 1.2) {
+      baseRisk += 10; // Inflow moderately higher than outflow
+    } else if (flowRatio < 0.8) {
+      baseRisk -= 5; // Good outflow management
+    }
+    
+    // Factor in structural health from safety data
+    if (safety) {
+      const structuralRisk = calculateStructuralRisk(safety);
+      baseRisk += structuralRisk;
+      
+      // Override with manual assessment if it's higher
+      const manualRiskMap = { Green: 20, Yellow: 65, Red: 100 };
+      const manualRisk = manualRiskMap[safety.floodRiskLevel] || 20;
+      if (manualRisk > baseRisk) {
+        baseRisk = manualRisk;
+      }
+    }
+    
+    // Clamp and set final values
+    riskPct = clampPct(baseRisk);
+    
+    // Determine risk level and alert color
+    if (riskPct >= 80) {
+      riskLabel = "Red";
+      alert = "red";
+    } else if (riskPct >= 50) {
+      riskLabel = "Yellow"; 
+      alert = "yellow";
+    } else {
+      riskLabel = "Green";
+      alert = "green";
+    }
+    
+    // Add water level info to label (separate from percentage)
+    if (damStatus) {
+      const waterLevelPct = damStatus.levelUnit === "%" ? 
+        damStatus.currentWaterLevel : 
+        (damStatus.maxLevel > damStatus.minLevel ? 
+          ((damStatus.currentWaterLevel - damStatus.minLevel) / (damStatus.maxLevel - damStatus.minLevel)) * 100 : 0);
+      riskLabel = `${riskLabel} (${Math.round(waterLevelPct)}% full)`;
+    }
+    
+  } else if (safety) {
+    // Fallback to manual assessment only
+    const riskMap = { Green: 20, Yellow: 65, Red: 100 };
+    const riskLevel = (safety.floodRiskLevel || "Green");
+    riskPct = clampPct(riskMap[riskLevel] ?? 0);
+    riskLabel = riskLevel;
+    
+    if (riskLevel.toLowerCase() === "red") alert = "red";
+    else if (riskLevel.toLowerCase() === "yellow") alert = "yellow";
+  }
 
   // Structural health score: percent of structural fields present (simple heuristic)
-  const sh = safety.structuralHealth || {};
-  const structFields = ["cracks", "vibration", "tilt"];
-  let presentCount = 0;
-  for (const f of structFields) {
-    const v = sh[f];
-    if (v !== undefined && v !== null && String(v).trim() !== "") presentCount += 1;
-  }
-  const structPct = clampPct(Math.round((presentCount / structFields.length) * 100));
-  // Short structural label: combine short notes or generic statuses
+  let structPct = 0;
   let structLabel = "OK";
-  if (presentCount === 0) structLabel = "No data";
-  else {
-    const parts = structFields.map(f => sh[f] ? `${f[0].toUpperCase()+f.slice(1)}:${String(sh[f]).slice(0,10)}` : null)
-                             .filter(Boolean);
-    structLabel = parts.join(", ");
+  
+  if (safety) {
+    const sh = safety.structuralHealth || {};
+    const structFields = ["cracks", "vibration", "tilt"];
+    let presentCount = 0;
+    for (const f of structFields) {
+      const v = sh[f];
+      if (v !== undefined && v !== null && String(v).trim() !== "") presentCount += 1;
+    }
+    structPct = clampPct(Math.round((presentCount / structFields.length) * 100));
+    
+    if (presentCount === 0) structLabel = "No data";
+    else {
+      const parts = structFields.map(f => sh[f] ? `${f[0].toUpperCase()+f.slice(1)}:${String(sh[f]).slice(0,10)}` : null)
+                               .filter(Boolean);
+      structLabel = parts.join(", ");
+    }
   }
 
   // Maintenance progress: proportion of time elapsed between lastInspection -> nextInspection
   let maintenancePct = 0;
   let maintenanceLabel = "—";
-  const m = safety.maintenance || {};
-  const last = m.lastInspection ? new Date(m.lastInspection) : null;
-  const next = m.nextInspection ? new Date(m.nextInspection) : null;
-  if (last && next && !isNaN(last.getTime()) && !isNaN(next.getTime())) {
-    const now = Date.now();
-    const total = next.getTime() - last.getTime();
-    const elapsed = now - last.getTime();
-    const frac = total > 0 ? (elapsed / total) : 0;
-    maintenancePct = clampPct(Math.round(frac * 100));
-    const lastStr = last.toLocaleDateString();
-    const nextStr = next.toLocaleDateString();
-    maintenanceLabel = `${lastStr} → ${nextStr}`;
-  } else if (last && !next) {
-    maintenancePct = 50;
-    maintenanceLabel = `Last: ${last.toLocaleDateString()}`;
-  } else {
-    maintenancePct = 0;
-    maintenanceLabel = "No schedule";
+  
+  if (safety) {
+    const m = safety.maintenance || {};
+    const last = m.lastInspection ? new Date(m.lastInspection) : null;
+    const next = m.nextInspection ? new Date(m.nextInspection) : null;
+    if (last && next && !isNaN(last.getTime()) && !isNaN(next.getTime())) {
+      const now = Date.now();
+      const total = next.getTime() - last.getTime();
+      const elapsed = now - last.getTime();
+      const frac = total > 0 ? (elapsed / total) : 0;
+      maintenancePct = clampPct(Math.round(frac * 100));
+      const lastStr = last.toLocaleDateString();
+      const nextStr = next.toLocaleDateString();
+      maintenanceLabel = `${lastStr} → ${nextStr}`;
+    } else if (last && !next) {
+      maintenancePct = 50;
+      maintenanceLabel = `Last: ${last.toLocaleDateString()}`;
+    } else {
+      maintenancePct = 0;
+      maintenanceLabel = "No schedule";
+    }
   }
-
-  let alert = "green";
-  if (riskLevel.toLowerCase() === "red") alert = "red";
-  else if (riskLevel.toLowerCase() === "yellow") alert = "yellow";
 
   return {
     riskPct, riskLabel,
@@ -86,9 +178,44 @@ function computeSafetyMetrics(safety) {
   };
 }
 
+// Helper function to calculate structural risk contribution
+function calculateStructuralRisk(safety) {
+  let structuralRisk = 0;
+  const sh = safety.structuralHealth || {};
+  
+  // Check for structural issues
+  if (sh.cracks && sh.cracks.toLowerCase().includes('severe')) structuralRisk += 20;
+  else if (sh.cracks && sh.cracks.toLowerCase().includes('moderate')) structuralRisk += 10;
+  else if (sh.cracks && sh.cracks.toLowerCase().includes('minor')) structuralRisk += 5;
+  
+  if (sh.vibration && sh.vibration.toLowerCase().includes('high')) structuralRisk += 15;
+  else if (sh.vibration && sh.vibration.toLowerCase().includes('moderate')) structuralRisk += 8;
+  
+  if (sh.tilt && sh.tilt.toLowerCase().includes('significant')) structuralRisk += 25;
+  else if (sh.tilt && sh.tilt.toLowerCase().includes('slight')) structuralRisk += 10;
+  
+  // Check seepage
+  if (safety.seepageReport) {
+    const seepage = safety.seepageReport.toLowerCase();
+    if (seepage.includes('heavy') || seepage.includes('severe')) structuralRisk += 20;
+    else if (seepage.includes('moderate')) structuralRisk += 10;
+    else if (seepage.includes('minor') || seepage.includes('slight')) structuralRisk += 5;
+  }
+  
+  // Check earthquake zone
+  if (safety.earthquakeZone) {
+    const zone = safety.earthquakeZone.toLowerCase();
+    if (zone.includes('v') || zone.includes('5')) structuralRisk += 15;
+    else if (zone.includes('iv') || zone.includes('4')) structuralRisk += 10;
+    else if (zone.includes('iii') || zone.includes('3')) structuralRisk += 5;
+  }
+  
+  return Math.min(structuralRisk, 30); // Cap structural risk contribution
+}
+
 // Alert card (mirrors DamCard layout from WaterLevel)
-function AlertCard({ dam, safety, saved, onToggleSave, onView }) {
-  const metrics = useMemo(() => computeSafetyMetrics(safety), [safety]);
+function AlertCard({ dam, safety, damStatus, damCore, saved, onToggleSave, onView }) {
+  const metrics = useMemo(() => computeSafetyMetrics(safety, damStatus, damCore), [safety, damStatus, damCore]);
 
   const stateName = dam.state || dam.stateName || dam._stateName || "";
   const riverName = dam.riverName || dam.river || dam._riverName || "";
@@ -106,32 +233,76 @@ function AlertCard({ dam, safety, saved, onToggleSave, onView }) {
         </button>
       </div>
 
+      {/* Real-time water level info */}
+      {damStatus && (
+        <div className="water-level-info" style={{ 
+          padding: "8px", 
+          backgroundColor: "#f8fafc", 
+          borderRadius: "4px", 
+          marginBottom: "8px",
+          fontSize: "12px",
+          color: "#475569"
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span><strong>Current Level:</strong> {damStatus.currentWaterLevel} {damStatus.levelUnit}</span>
+            <span><strong>Inflow:</strong> {damStatus.inflowRate || 0} m³/s</span>
+            <span><strong>Outflow:</strong> {damStatus.outflowRate || 0} m³/s</span>
+          </div>
+          {damStatus.lastSyncAt && (
+            <div style={{ marginTop: "4px", fontSize: "11px", color: "#64748b" }}>
+              Last updated: {new Date(damStatus.lastSyncAt).toLocaleString()}
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="charts-row">
         <div className="chart-block">
-          <CircularProgressbar
-            value={metrics.riskPct}
-            text={`${metrics.riskPct}%`}
-            styles={buildStyles({ textSize: "18px" })}
-          />
-          <div className="chart-label">Flood Risk ({metrics.riskLabel})</div>
+          <div className={`metric-card risk-${metrics.alert}`}>
+            <div className="metric-header">
+              <span className="metric-title">Flood Risk</span>
+              <span className="metric-value">{metrics.riskPct}%</span>
+            </div>
+            <div className="metric-bar">
+              <div 
+                className={`metric-progress risk-${metrics.alert}`}
+                style={{ width: `${metrics.riskPct}%` }}
+              />
+            </div>
+            <div className="metric-description">{metrics.riskLabel}</div>
+          </div>
         </div>
 
         <div className="chart-block">
-          <CircularProgressbar
-            value={metrics.structPct}
-            text={`${metrics.structPct}%`}
-            styles={buildStyles({ textSize: "18px" })}
-          />
-          <div className="chart-label">Structural ({metrics.structLabel})</div>
+          <div className="metric-card">
+            <div className="metric-header">
+              <span className="metric-title">Structural</span>
+              <span className="metric-value">{metrics.structPct}%</span>
+            </div>
+            <div className="metric-bar">
+              <div 
+                className="metric-progress structural"
+                style={{ width: `${metrics.structPct}%` }}
+              />
+            </div>
+            <div className="metric-description">{metrics.structLabel}</div>
+          </div>
         </div>
 
         <div className="chart-block">
-          <CircularProgressbar
-            value={metrics.maintenancePct}
-            text={`${metrics.maintenancePct}%`}
-            styles={buildStyles({ textSize: "18px" })}
-          />
-          <div className="chart-label">Maintenance ({metrics.maintenanceLabel})</div>
+          <div className="metric-card">
+            <div className="metric-header">
+              <span className="metric-title">Maintenance</span>
+              <span className="metric-value">{metrics.maintenancePct}%</span>
+            </div>
+            <div className="metric-bar">
+              <div 
+                className="metric-progress maintenance"
+                style={{ width: `${metrics.maintenancePct}%` }}
+              />
+            </div>
+            <div className="metric-description">{metrics.maintenanceLabel}</div>
+          </div>
         </div>
       </div>
 
@@ -142,36 +313,58 @@ function AlertCard({ dam, safety, saved, onToggleSave, onView }) {
         </div>
       </div>
 
-      {/* expanded details shown below charts (exact fields requested) */}
-      <div style={{ marginTop: 8, borderTop: "1px solid #eef2ff", paddingTop: 8 }}>
+      {/* expanded details shown below charts */}
+      <div className="dam-details">
         {safety ? (
           <>
-            <div style={{ fontSize: 13, color: "#334155", marginBottom: 6 }}>
-              <strong>Seepage:</strong> {safety.seepageReport || "N/A"}
+            <div className="detail-item">
+              <span className="detail-label">Seepage:</span>
+              <span className="detail-value">{safety.seepageReport || "N/A"}</span>
             </div>
 
-            <div style={{ fontSize: 13, color: "#334155", marginBottom: 6 }}>
-              <strong>Earthquake Zone:</strong> {safety.earthquakeZone || "N/A"}
+            <div className="detail-item">
+              <span className="detail-label">Earthquake Zone:</span>
+              <span className="detail-value">{safety.earthquakeZone || "N/A"}</span>
             </div>
 
-            <div style={{ fontSize: 13, color: "#334155", marginBottom: 6 }}>
-              <strong>Emergency Contact:</strong><br />
-              <span>{safety.emergencyContact?.authorityName || "N/A"}</span><br />
-              <span>{safety.emergencyContact?.phone || ""} {safety.emergencyContact?.email ? `• ${safety.emergencyContact.email}` : ""}</span><br />
-              <span>{safety.emergencyContact?.address || ""}</span>
+            <div className="detail-item">
+              <span className="detail-label">Emergency Contact:</span>
+              <div className="detail-value">
+                <div>{safety.emergencyContact?.authorityName || "N/A"}</div>
+                <div className="contact-info">
+                  {safety.emergencyContact?.phone && (
+                    <span>📞 {safety.emergencyContact.phone}</span>
+                  )}
+                  {safety.emergencyContact?.email && (
+                    <span>✉️ {safety.emergencyContact.email}</span>
+                  )}
+                </div>
+                {safety.emergencyContact?.address && (
+                  <div className="contact-address">📍 {safety.emergencyContact.address}</div>
+                )}
+              </div>
             </div>
 
-            <div style={{ fontSize: 13 }}>
-              <strong>Maintenance Report:</strong>
-              <div>
+            <div className="detail-item">
+              <span className="detail-label">Maintenance Report:</span>
+              <div className="detail-value">
                 {safety.maintenance?.reportFile ? (
-                  <a href={`${BASE_API}/uploads/${safety.maintenance.reportFile}`} target="_blank" rel="noreferrer">View Report</a>
-                ) : " N/A"}
+                  <a 
+                    href={`${BASE_API}/uploads/${safety.maintenance.reportFile}`} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="report-link"
+                  >
+                    📄 View Report
+                  </a>
+                ) : (
+                  "N/A"
+                )}
               </div>
             </div>
           </>
         ) : (
-          <div style={{ fontSize: 13, color: "#6b7280" }}>No safety data available.</div>
+          <div className="no-data">No safety data available.</div>
         )}
       </div>
     </div>
@@ -187,20 +380,22 @@ export default function AlertPage() {
   const [loading, setLoading] = useState(false);
   const [secretOnly, setSecretOnly] = useState(false);
 
-  // Saved entries: array of { dam, safety }
+  // Saved entries: array of { dam, safety, damStatus, damCore }
   const [savedList, setSavedList] = useState([]);
   const [savedIds, setSavedIds] = useState(new Set());
 
   // All-dams drilldowns
   const [states, setStates] = useState([]);
   const [rivers, setRivers] = useState([]);
-  const [damsEnriched, setDamsEnriched] = useState([]); // [{ dam, safety }]
+  const [damsEnriched, setDamsEnriched] = useState([]); // [{ dam, safety, damStatus, damCore }]
   const [selectedState, setSelectedState] = useState("");
   const [selectedRiver, setSelectedRiver] = useState("");
   const [selectedDam, setSelectedDam] = useState("");
 
-  // cache for safety to avoid duplicate requests
+  // cache for safety and status to avoid duplicate requests
   const safetyCacheRef = useRef(new Map());
+  const statusCacheRef = useRef(new Map());
+  const coreCacheRef = useRef(new Map());
 
   // -----------------------------------------
   // fetch safety for dam (with cache)
@@ -217,7 +412,35 @@ export default function AlertPage() {
     }
   };
 
-  // Fetch saved dams for user and enrich with safety
+  // fetch dam status for dam (with cache)
+  const fetchStatusForDam = async (damId) => {
+    const cache = statusCacheRef.current;
+    if (cache.has(damId)) return cache.get(damId);
+    try {
+      const res = await axios.get(`${STATUS_API}/dam/${damId}/status`);
+      cache.set(damId, res.data);
+      return res.data;
+    } catch (err) {
+      cache.set(damId, null);
+      return null;
+    }
+  };
+
+  // fetch dam core info (with cache)
+  const fetchCoreForDam = async (damId) => {
+    const cache = coreCacheRef.current;
+    if (cache.has(damId)) return cache.get(damId);
+    try {
+      const res = await axios.get(`${DATA_API}/dam/${damId}`);
+      cache.set(damId, res.data);
+      return res.data;
+    } catch (err) {
+      cache.set(damId, null);
+      return null;
+    }
+  };
+
+  // Fetch saved dams for user and enrich with safety and status data
   const fetchSavedDams = async () => {
     setLoading(true);
     try {
@@ -232,11 +455,15 @@ export default function AlertPage() {
 
       // If API returns shape [{ dam: {...}, ...}, ...]
       if (data.length && data[0].dam) {
-        // enrich with safety if not provided
+        // enrich with safety, status, and core data
         const enriched = await Promise.all(data.map(async (r) => {
           const dam = r.dam;
-          const safety = r.safety ?? r.latestSafety ?? r.latestStatus ?? await fetchSafetyForDam(dam._id);
-          return { dam, safety: safety || null };
+          const [safety, damStatus, damCore] = await Promise.all([
+            r.safety ?? r.latestSafety ?? r.latestStatus ?? fetchSafetyForDam(dam._id),
+            fetchStatusForDam(dam._id),
+            fetchCoreForDam(dam._id)
+          ]);
+          return { dam, safety: safety || null, damStatus: damStatus || null, damCore: damCore || dam };
         }));
         setSavedList(enriched);
         setSavedIds(new Set(data.map(r => String(r.dam._id))));
@@ -244,8 +471,12 @@ export default function AlertPage() {
         // array of dams
         const damsArr = data;
         const enriched = await Promise.all(damsArr.map(async (d) => {
-          const safety = await fetchSafetyForDam(d._id);
-          return { dam: d, safety: safety || null };
+          const [safety, damStatus, damCore] = await Promise.all([
+            fetchSafetyForDam(d._id),
+            fetchStatusForDam(d._id),
+            fetchCoreForDam(d._id)
+          ]);
+          return { dam: d, safety: safety || null, damStatus: damStatus || null, damCore: damCore || d };
         }));
         setSavedList(enriched);
         setSavedIds(new Set(damsArr.map(d => String(d._id))));
@@ -286,8 +517,12 @@ export default function AlertPage() {
       const damsRaw = res.data || [];
       const enriched = await Promise.all(damsRaw.map(async (d) => {
         const damDoc = d.dam ? d.dam : d;
-        const safety = await fetchSafetyForDam(damDoc._id);
-        return { dam: damDoc, safety: safety || null };
+        const [safety, damStatus, damCore] = await Promise.all([
+          fetchSafetyForDam(damDoc._id),
+          fetchStatusForDam(damDoc._id),
+          fetchCoreForDam(damDoc._id)
+        ]);
+        return { dam: damDoc, safety: safety || null, damStatus: damStatus || null, damCore: damCore || damDoc };
       }));
       setDamsEnriched(enriched);
     } catch (err) {
@@ -316,13 +551,17 @@ export default function AlertPage() {
       }
 
       const enriched = await Promise.all(allDams.map(async (pair) => {
-        const safety = await fetchSafetyForDam(pair.dam._id);
+        const [safety, damStatus, damCore] = await Promise.all([
+          fetchSafetyForDam(pair.dam._id),
+          fetchStatusForDam(pair.dam._id),
+          fetchCoreForDam(pair.dam._id)
+        ]);
         const DamWithMeta = {
           ...pair.dam,
           riverName: pair.river?.name || pair.dam.riverName || pair.dam.river,
           state: states.find(s => s._id === stateId)?.name || pair.dam.state || "",
         };
-        return { dam: DamWithMeta, safety: safety || null };
+        return { dam: DamWithMeta, safety: safety || null, damStatus: damStatus || null, damCore: damCore || DamWithMeta };
       }));
       setDamsEnriched(enriched);
     } catch (err) {
@@ -356,7 +595,7 @@ export default function AlertPage() {
   };
 
   const viewDam = (damId) => {
-    navigate(`/core-dam-info/${damId}`);
+    navigate(`/dam-dashboard/${damId}`);
   };
 
   const toggleSecret = () => setSecretOnly(s => !s);
@@ -449,7 +688,7 @@ export default function AlertPage() {
               <p>Please login or create an account to see your saved dams (alerts).</p>
               <div className="auth-buttons">
                 <button onClick={() => navigate("/login")} className="btn">Login</button>
-                <button onClick={() => navigate("/signup")} className="btn btn-outline">Create Account</button>
+                <button onClick={() => navigate("/register")} className="btn btn-outline">Create Account</button>
               </div>
             </div>
           ) : (
@@ -458,11 +697,13 @@ export default function AlertPage() {
                 <div className="no-dams">No saved dams.</div>
               ) : (
                 <div className="dam-grid">
-                  {savedDisplay.map(({ dam, safety }) => (
+                  {savedDisplay.map(({ dam, safety, damStatus, damCore }) => (
                     <AlertCard
                       key={dam._id}
                       dam={dam}
                       safety={safety}
+                      damStatus={damStatus}
+                      damCore={damCore}
                       saved={savedIds.has(String(dam._id))}
                       onToggleSave={toggleSave}
                       onView={viewDam}
@@ -499,11 +740,13 @@ export default function AlertPage() {
 
           {allDisplay.length ? (
             <div className="dam-grid">
-              {allDisplay.map(({ dam, safety }) => (
+              {allDisplay.map(({ dam, safety, damStatus, damCore }) => (
                 <AlertCard
                   key={dam._id}
                   dam={dam}
                   safety={safety}
+                  damStatus={damStatus}
+                  damCore={damCore}
                   saved={savedIds.has(String(dam._id))}
                   onToggleSave={toggleSave}
                   onView={viewDam}

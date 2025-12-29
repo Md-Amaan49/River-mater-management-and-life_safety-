@@ -69,16 +69,16 @@ function DamUsageCard({ dam, usage, saved, onToggleSave, onView }) {
 
       <div className="usage-breakdown">
         <div className="usage-left">
-          <div className="usage-row"><span>Irrigation</span><strong>{irr}</strong></div>
-          <div className="usage-row"><span>Drinking</span><strong>{drink}</strong></div>
-          <div className="usage-row"><span>Industrial</span><strong>{ind}</strong></div>
+          <div className="usage-row"><span>Irrigation (MCM)</span><strong>{irr}</strong></div>
+          <div className="usage-row"><span>Drinking (MCM)</span><strong>{drink}</strong></div>
+          <div className="usage-row"><span>Industrial (MCM)</span><strong>{ind}</strong></div>
         </div>
 
         <div className="usage-right">
-          <div className="usage-row"><span>Hydropower</span><strong>{hydro}</strong></div>
-          <div className="usage-row"><span>Evaporation Loss</span><strong>{evap}</strong></div>
-          <div className="usage-row"><span>Environmental Flow</span><strong>{env}</strong></div>
-          <div className="usage-row"><span>Farming Support</span><strong>{farm}</strong></div>
+          <div className="usage-row"><span>Hydropower (MCM)</span><strong>{hydro}</strong></div>
+          <div className="usage-row"><span>Evaporation Loss (MCM)</span><strong>{evap}</strong></div>
+          <div className="usage-row"><span>Environmental Flow (MCM)</span><strong>{env}</strong></div>
+          <div className="usage-row"><span>Farming Support (Hectares)</span><strong>{farm}</strong></div>
         </div>
       </div>
 
@@ -312,7 +312,7 @@ export default function WaterUsagePage() {
   const buildChartForSingle = (usage, damName) => {
     const labels = ["Irrigation","Drinking","Industrial","Hydropower","Evap. Loss","Env. Flow","Farming"];
     const values = [
-      num(usage?.irrigation),
+      num(usage?.irrigation ),
       num(usage?.drinking),
       num(usage?.industrial),
       num(usage?.hydropower ?? usage?.hydroPower ?? 0),
@@ -466,7 +466,7 @@ export default function WaterUsagePage() {
               <p>Please login or create an account to see your saved dams.</p>
               <div className="auth-buttons">
                 <button onClick={() => navigate("/login")} className="btn">Login</button>
-                <button onClick={() => navigate("/signup")} className="btn btn-outline">Create Account</button>
+                <button onClick={() => navigate("/register")} className="btn btn-outline">Create Account</button>
               </div>
             </div>
           ) : (
@@ -583,13 +583,13 @@ export default function WaterUsagePage() {
 
               return (
                 <>
-                  <UsageCard title="Irrigation (total)" value={sourceTotals.irrigation} />
-                  <UsageCard title="Drinking (total)" value={sourceTotals.drinking} />
-                  <UsageCard title="Industrial (total)" value={sourceTotals.industrial} />
-                  <UsageCard title="Hydropower (total)" value={sourceTotals.hydropower} />
-                  <UsageCard title="Evaporation Loss" value={sourceTotals.evaporationLoss} />
-                  <UsageCard title="Environmental Flow" value={sourceTotals.environmentalFlow} />
-                  <UsageCard title="Farming Support" value={sourceTotals.farmingSupport} />
+                  <UsageCard title="Irrigation  (total)" value={sourceTotals.irrigation +" MCM"} />
+                  <UsageCard title="Drinking (total)" value={sourceTotals.drinking +" MCM"} />
+                  <UsageCard title="Industrial (total)" value={sourceTotals.industrial +" MCM"} />
+                  <UsageCard title="Hydropower (total)" value={sourceTotals.hydropower + " MCM"} />
+                  <UsageCard title="Evaporation Loss (total)" value={sourceTotals.evaporationLoss + " MCM"} />
+                  <UsageCard title="Environmental Flow (total)" value={sourceTotals.environmentalFlow + " MCM"} />
+                  <UsageCard title="Farming Support (Hectares)" value={sourceTotals.farmingSupport + " Ha"} />
                 </>
               );
             })()}

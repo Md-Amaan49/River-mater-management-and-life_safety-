@@ -42,17 +42,54 @@
   gap: 16px;
 }
 
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .search-bar {
   padding: 6px 12px;
+  padding-right: 30px; /* Space for clear button */
   border-radius: 20px;
   border: none;
   outline: none;
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
+  width: 250px;
+  transition: all 0.3s ease;
+}
+
+.search-bar:focus {
+  background: rgba(255, 255, 255, 0.15);
+  width: 300px;
 }
 
 .search-bar::placeholder {
   color: #b0bec5;
+}
+
+.search-clear {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #b0bec5;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.search-clear:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
 }
 
 .profile-icon {

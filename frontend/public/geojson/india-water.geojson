@@ -1,0 +1,90 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "Ganga", "type": "river" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [81.0, 25.0],
+          [83.0, 26.0],
+          [85.0, 27.5],
+          [88.0, 28.5]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Yamuna", "type": "river" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [78.0, 27.0],
+          [79.5, 26.5],
+          [80.5, 26.0]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Brahmaputra", "type": "river" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [91.5, 27.0],
+          [92.5, 26.5],
+          [93.5, 26.0]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Dal Lake", "type": "lake" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [74.85, 34.1],
+            [74.87, 34.1],
+            [74.87, 34.12],
+            [74.85, 34.12],
+            [74.85, 34.1]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Chilka Lake", "type": "lake" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [85.0, 19.5],
+            [85.5, 19.5],
+            [85.5, 19.9],
+            [85.0, 19.9],
+            [85.0, 19.5]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Indian Ocean Coast", "type": "ocean" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [68.0, 8.0],
+            [97.0, 8.0],
+            [97.0, 37.0],
+            [68.0, 37.0],
+            [68.0, 8.0]
+          ]
+        ]
+      }
+    }
+  ]
+}

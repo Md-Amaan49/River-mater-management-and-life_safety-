@@ -1,0 +1,82 @@
+.river-map-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.dropdown-section {
+  background: #f9fafb;
+  padding: 15px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.dropdown-section h2 {
+  margin-bottom: 10px;
+  font-size: 1.4rem;
+  color: #333;
+}
+
+.dropdowns {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.dropdowns select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #fff;
+}
+
+.map-container {
+  width: 100%;
+  height: 75vh;
+}
+
+/* Leaflet popup styles */
+.dam-popup {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.4;
+}
+
+.popup-actions {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.popup-actions a {
+  color: #3b82f6;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.popup-actions a:hover {
+  text-decoration: underline;
+}
+
+.popup-save-btn {
+  padding: 4px 8px;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.popup-save-btn:hover {
+  border-color: #3b82f6;
+  background: #f8fafc;
+}
+
+.popup-save-btn.saved {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}

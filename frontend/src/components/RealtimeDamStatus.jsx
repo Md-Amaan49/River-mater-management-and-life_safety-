@@ -1,14 +1,20 @@
 // pages/RealtimeDamStatus.jsx
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/RealtimeDamStatus.css";
 
 const API_BASE = "http://localhost:5000/api/data";
+const USER_API = "http://localhost:5000/api/users";
 
 export default function RealtimeDamStatus() {
   const { damId } = useParams();
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const authHeader = token ? { Authorization: `Bearer ${token}` } : undefined;
+
   const [status, setStatus] = useState(null);
+  const [isSaved, setIsSaved] = useState(false);
   const [form, setForm] = useState({
     currentWaterLevel: "",
     levelUnit: "m",
@@ -38,9 +44,38 @@ export default function RealtimeDamStatus() {
         }
       })
       .catch(() => {}); // okay if no status exists
-  }, [damId]);
+
+    // Check if dam is saved
+    if (token) {
+      axios.get(`${USER_API}/saved-dams`, { headers: authHeader })
+        .then((res) => {
+          const savedDams = res.data || [];
+          const isCurrentDamSaved = savedDams.some(item => {
+            const dam = item.dam || item;
+            return String(dam._id) === String(damId);
+          });
+          setIsSaved(isCurrentDamSaved);
+        })
+        .catch((err) => console.error("Error checking saved status:", err));
+    }
+  }, [damId, token]);
 
   const onChange = (k, v) => setForm((prev) => ({ ...prev, [k]: v }));
+
+  // Toggle save dam
+  const toggleSave = async () => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      await axios.patch(`${USER_API}/saved-dams/${damId}`, {}, { headers: authHeader });
+      setIsSaved(!isSaved);
+    } catch (err) {
+      console.error("Error toggling save:", err);
+    }
+  };
 
   const save = async () => {
     try {
@@ -67,7 +102,26 @@ export default function RealtimeDamStatus() {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Real-time Water Level & Flow</h2>
+      <div className="realtime-header">
+        <h2 className="text-2xl font-bold mb-4">Real-time Water Level & Flow</h2>
+        <div className="header-actions">
+          {token && (
+            <button
+              className={`save-btn ${isSaved ? "saved" : ""}`}
+              onClick={toggleSave}
+              title={isSaved ? "Unsave Dam" : "Save Dam"}
+            >
+              {isSaved ? "★ Saved" : "☆ Save Dam"}
+            </button>
+          )}
+          <button 
+            className="details-btn"
+            onClick={() => navigate(`/core-dam-info/${damId}`)}
+          >
+            View Details
+          </button>
+        </div>
+      </div>
 
       <label className="flex flex-col">
         <span className="font-medium">Level Unit</span>

@@ -173,4 +173,92 @@ export const saveOrUpdateCoreDamInfo = async (req, res) => {
     console.error(err);
     res.status(500).json({ message: "Save/Update failed", error: err.message });
   }
+};// Get all dam points (for default view)
+export const getAllDamPoints = async (req, res) => {
+  try {
+    const dams = await Dam.find({}, "name state river coordinates");
+    const points = dams
+      .filter(d => d.coordinates)
+      .map(d => {
+        let coords = null;
+        if (typeof d.coordinates === "string") {
+          const parts = d.coordinates.split(",").map(p => p.trim());
+          if (parts.length === 2) coords = [Number(parts[0]), Number(parts[1])];
+        }
+        return { _id: d._id, name: d.name, state: d.state, river: d.river, coordinates: coords };
+      });
+    res.json(points);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching dam points", error: err.message });
+  }
+};
+
+// Get dam points by state
+export const getDamPointsByState = async (req, res) => {
+  const { stateId } = req.params;
+  try {
+    const state = await State.findById(stateId);
+    if (!state) return res.status(404).json({ message: "State not found" });
+    const dams = await Dam.find({ state: state.name }).lean();
+    const points = dams.map(d => ({
+      _id: d._id,
+      name: d.name,
+      coordinates: d.coordinates ? [d.coordinates.lat, d.coordinates.lng] : null,
+      state: d.state || null,
+      place: d.place || null
+    }));
+    res.json(points);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch dam points by state" });
+  }
+};
+// Get dam points by river
+export const getDamPointsByRiver = async (req, res) => {
+  try {
+    const { riverId } = req.params;
+    const dams = await Dam.find({ river: riverId }, "name state river coordinates");
+    const points = dams.map(d => ({
+      _id: d._id,
+      name: d.name,
+      state: d.state,
+      river: d.river,
+      coordinates: d.coordinates 
+        ? d.coordinates.split(",").map(n => Number(n.trim())) 
+        : null
+    }));
+    res.json(points);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching dams by river", error: err.message });
+  }
+};
+
+// Get dams by state (for WaterFlowPage)
+export const getDamsByState = async (req, res) => {
+  try {
+    const { stateId } = req.params;
+    const state = await State.findById(stateId);
+    if (!state) return res.status(404).json({ message: "State not found" });
+    
+    const dams = await Dam.find({ state: state.name }).lean();
+    res.json(dams);
+  } catch (err) {
+    console.error("Error fetching dams by state:", err);
+    res.status(500).json({ message: "Failed to fetch dams by state" });
+  }
+};
+
+// Get dams by river (for WaterFlowPage)
+export const getDamsByRiverName = async (req, res) => {
+  try {
+    const { riverId } = req.params;
+    const river = await River.findById(riverId);
+    if (!river) return res.status(404).json({ message: "River not found" });
+    
+    const dams = await Dam.find({ river: river.name }).lean();
+    res.json(dams);
+  } catch (err) {
+    console.error("Error fetching dams by river:", err);
+    res.status(500).json({ message: "Failed to fetch dams by river" });
+  }
 };

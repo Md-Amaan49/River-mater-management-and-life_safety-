@@ -102,3 +102,308 @@
   cursor: pointer;
   text-align: left;
 }
+
+/* Additional styles for new functionality while maintaining dark theme */
+.auth-required {
+  padding: 20px;
+  text-align: center;
+  color: #e6eef8;
+}
+
+.auth-required h4 {
+  margin: 0 0 12px 0;
+  color: #e6eef8;
+}
+
+.auth-required p {
+  margin: 0 0 20px 0;
+  color: rgba(255,255,255,0.7);
+}
+
+.login-btn {
+  padding: 10px 20px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.login-btn:hover {
+  background: #2563eb;
+}
+
+.stats-bar {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.stat {
+  text-align: center;
+  flex: 1;
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #e6eef8;
+}
+
+.stat.critical .stat-number {
+  color: #ff6b6b;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+.alerts-section, .saved-dams-section, .guidelines-section, 
+.restricted-areas-section, .public-spots-section, .history-section {
+  padding-bottom: 12px;
+}
+
+.alerts-list, .dams-list, .guidelines-list, .areas-list, .spots-list, .events-list {
+  padding: 0 4px;
+}
+
+.alert-item, .dam-item, .guideline-item, .area-item, .spot-item, .event-item {
+  background: rgba(255,255,255,0.02);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-left: 3px solid transparent;
+}
+
+.alert-item.red { border-left-color: #ff6b6b; }
+.alert-item.yellow { border-left-color: #ffd93d; }
+.alert-item.green { border-left-color: #6bcf7f; }
+
+.alert-header, .dam-header, .area-header, .spot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.alert-header h4, .dam-header h4, .area-header h4, .spot-header h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #e6eef8;
+}
+
+.risk-badge, .restriction-badge, .priority-badge, .severity-badge, .event-type {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.risk-badge.red, .restriction-badge.no_entry, .severity-badge.critical, .event-type.emergency {
+  background: #ff6b6b;
+  color: white;
+}
+
+.risk-badge.yellow, .restriction-badge.restricted_access, .severity-badge.high, .event-type.incident {
+  background: #ffd93d;
+  color: #333;
+}
+
+.risk-badge.green, .restriction-badge.warning_only, .severity-badge.low, .event-type.maintenance {
+  background: #6bcf7f;
+  color: white;
+}
+
+.priority-badge.critical { background: #ff6b6b; color: white; }
+.priority-badge.high { background: #ffd93d; color: #333; }
+.priority-badge.medium { background: #74c0fc; color: white; }
+.priority-badge.low { background: #868e96; color: white; }
+
+.alert-details p, .dam-details p, .area-description, .spot-description, .event-description {
+  margin: 4px 0;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.3;
+}
+
+.dam-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.view-dam-btn, .dashboard-btn {
+  padding: 4px 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.05);
+  color: #e6eef8;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.view-dam-btn:hover {
+  border-color: #74c0fc;
+  background: rgba(116,192,252,0.1);
+  color: #74c0fc;
+}
+
+.dashboard-btn {
+  background: rgba(107,207,127,0.2);
+  border-color: #6bcf7f;
+  color: #6bcf7f;
+}
+
+.dashboard-btn:hover {
+  background: rgba(107,207,127,0.3);
+}
+
+.view-dam-btn.small {
+  padding: 2px 6px;
+  font-size: 0.7rem;
+}
+
+.category-section, .type-section, .dam-history-section {
+  margin-bottom: 16px;
+}
+
+.category-title, .type-title, .dam-title {
+  padding: 8px 12px;
+  margin: 0 0 8px 0;
+  background: rgba(255,255,255,0.05);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e6eef8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.event-header {
+  margin-bottom: 8px;
+}
+
+.event-header h4 {
+  margin: 0 0 4px 0;
+  font-size: 0.9rem;
+  color: #e6eef8;
+}
+
+.event-meta {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.event-date {
+  padding: 2px 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.8);
+}
+
+.event-item.flood { border-left-color: #74c0fc; }
+.event-item.maintenance { border-left-color: #6bcf7f; }
+.event-item.emergency { border-left-color: #ff6b6b; }
+.event-item.incident { border-left-color: #ffd93d; }
+
+.rating {
+  color: #ffd93d;
+  font-size: 0.9rem;
+}
+
+.nearby-dams, .applicable-dams {
+  margin-top: 6px;
+  padding: 6px;
+  background: rgba(0,0,0,0.15);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.8);
+}
+
+.help-section {
+  padding: 12px;
+}
+
+.help-header {
+  margin-bottom: 16px;
+  text-align: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.help-header h3 {
+  margin: 0 0 6px 0;
+  color: #e6eef8;
+  font-size: 1.1rem;
+}
+
+.help-header p {
+  margin: 0;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.8rem;
+}
+
+.help-category {
+  margin-bottom: 20px;
+}
+
+.help-category-title {
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+  color: #e6eef8;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.help-item {
+  margin-bottom: 12px;
+}
+
+.help-question {
+  margin: 0 0 6px 0;
+  font-size: 0.9rem;
+  color: #e6eef8;
+  font-weight: 600;
+}
+
+.help-answer {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.4;
+}
+
+.help-contacts {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.help-contacts h4 {
+  margin: 0 0 12px 0;
+  color: #e6eef8;
+  font-size: 0.95rem;
+}
+
+.contact-item {
+  margin-bottom: 6px;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.8);
+}

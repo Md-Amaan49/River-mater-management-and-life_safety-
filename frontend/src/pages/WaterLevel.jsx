@@ -327,7 +327,7 @@ const toggleSave = async (damId) => {
 
   // View dam details
   const viewDam = (damId) => {
-    navigate(`/core-dam-info/${damId}`);
+    navigate(`/dam-dashboard/${damId}`);
   };
 
   // SECRET filter toggler (only show red-alert)
@@ -434,7 +434,7 @@ const toggleSave = async (damId) => {
               <p>Please login or create an account to see your saved dams.</p>
               <div className="auth-buttons">
                 <button onClick={() => navigate("/login")} className="btn">Login</button>
-                <button onClick={() => navigate("/signup")} className="btn btn-outline">Create Account</button>
+                <button onClick={() => navigate("/register")} className="btn btn-outline">Create Account</button>
               </div>
             </div>
           ) : (

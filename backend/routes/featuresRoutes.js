@@ -15,6 +15,9 @@ const router = express.Router();
 // Public: view features list (you can wrap with protect if you want)
 router.get("/", getFeatures);
 
+// Get features for a specific dam (needed by Features component)
+router.get("/dam/:damId", getFeatures);
+
 // Admin only: manage features
 router.post("/", protect, admin, addFeature);
 router.put("/:id", protect, admin, updateFeature);

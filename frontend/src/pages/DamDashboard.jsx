@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import {
@@ -24,6 +24,7 @@ const DAM_API = "http://localhost:5000/api/dam";
 const DATA_API = "http://localhost:5000/api/data";
 const USAGE_API = "http://localhost:5000/api/water-usage";
 const SENSORS_API = "http://localhost:5000/api/sensors";
+const USER_API = "http://localhost:5000/api/users";
 
 // Compact Card
 const Card = ({ title, children, className = "" }) => (
@@ -35,12 +36,16 @@ const Card = ({ title, children, className = "" }) => (
 
 export default function DamDashboard() {
   const { damId } = useParams();
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const authHeader = token ? { Authorization: `Bearer ${token}` } : undefined;
 
   const [core, setCore] = useState(null);
   const [status, setStatus] = useState(null);
   const [history, setHistory] = useState([]);
   const [usage, setUsage] = useState(null);
   const [sensors, setSensors] = useState([]);
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -66,11 +71,41 @@ export default function DamDashboard() {
         setHistory(Array.isArray(histRes?.data) ? histRes.data : []);
         setUsage(usageRes?.data || null);
         setSensors(Array.isArray(sensorsRes?.data) ? sensorsRes.data : []);
+
+        // Check if dam is saved
+        if (token) {
+          try {
+            const savedRes = await axios.get(`${USER_API}/saved-dams`, { headers: authHeader });
+            const savedDams = savedRes.data || [];
+            const isCurrentDamSaved = savedDams.some(item => {
+              const dam = item.dam || item;
+              return String(dam._id) === String(damId);
+            });
+            setIsSaved(isCurrentDamSaved);
+          } catch (err) {
+            console.error("Error checking saved status:", err);
+          }
+        }
       } catch (err) {
         console.error("Error loading dashboard:", err);
       }
     })();
-  }, [damId]);
+  }, [damId, token]);
+
+  // Toggle save dam
+  const toggleSave = async () => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      await axios.patch(`${USER_API}/saved-dams/${damId}`, {}, { headers: authHeader });
+      setIsSaved(!isSaved);
+    } catch (err) {
+      console.error("Error toggling save:", err);
+    }
+  };
 
   // Derived datasets
   const reservoirPct = useMemo(() => {
@@ -115,6 +150,31 @@ export default function DamDashboard() {
 
   return (
     <div className="dashboard">
+      {/* Dashboard Header */}
+      <div className="dashboard-header">
+        <div className="dam-info">
+          <h1 className="dam-name">{core?.name || "Dam Dashboard"}</h1>
+          <p className="dam-location">{core?.riverName} • {core?.state}</p>
+        </div>
+        <div className="dashboard-actions">
+          {token && (
+            <button
+              className={`save-btn ${isSaved ? "saved" : ""}`}
+              onClick={toggleSave}
+              title={isSaved ? "Unsave Dam" : "Save Dam"}
+            >
+              {isSaved ? "★ Saved" : "☆ Save Dam"}
+            </button>
+          )}
+          <button 
+            className="details-btn"
+            onClick={() => navigate(`/core-dam-info/${damId}`)}
+          >
+            View Details
+          </button>
+        </div>
+      </div>
+
       <div className="grid-top">
         {/* KPI */}
         <Card title="Current Level">
@@ -136,40 +196,40 @@ export default function DamDashboard() {
       <div className="grid-charts">
         {/* Reservoir Gauge */}
         <Card title="Reservoir Fill %">
-  <div className="chart-small">
-    <ResponsiveContainer width="100%" height="100%">
-      <RadialBarChart
-        innerRadius="70%"
-        outerRadius="100%"
-        data={[{ value: reservoirPct || 0 }]}
-        startAngle={180}
-        endAngle={180 - ((reservoirPct || 0) / 100) * 180} // dynamically cut arc
-      >
-        <RadialBar
-          dataKey="value"
-          clockWise
-          cornerRadius={10}
-          fill={
-            reservoirPct < 70
-              ? "#34d399"
-              : reservoirPct < 90
-              ? "#fbbf24"
-              : "#f87171"
-          }
-        />
-        <text
-          x="50%"
-          y="60%"
-          textAnchor="middle"
-          fill="#fff"
-          fontSize={18}
-        >
-          {reservoirPct ? `${Math.round(reservoirPct)}%` : "—"}
-        </text>
-      </RadialBarChart>
-    </ResponsiveContainer>
-  </div>
-</Card>
+          <div className="chart-small">
+            <ResponsiveContainer width="100%" height="100%">
+              <RadialBarChart
+                innerRadius="70%"
+                outerRadius="100%"
+                data={[{ value: reservoirPct || 0 }]}
+                startAngle={180}
+                endAngle={0}
+              >
+                <RadialBar
+                  dataKey="value"
+                  clockWise
+                  cornerRadius={10}
+                  fill={
+                    (reservoirPct || 0) < 70
+                      ? "#34d399"
+                      : (reservoirPct || 0) < 90
+                      ? "#fbbf24"
+                      : "#f87171"
+                  }
+                />
+                <text
+                  x="50%"
+                  y="60%"
+                  textAnchor="middle"
+                  fill="#fff"
+                  fontSize={18}
+                >
+                  {reservoirPct ? `${Math.round(reservoirPct)}%` : "—"}
+                </text>
+              </RadialBarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
 
 
 
@@ -206,19 +266,20 @@ export default function DamDashboard() {
         <Card title="Water Level Trend">
           <div className="chart-small">
             <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={levelSeries}>
-                     <XAxis
+              <LineChart data={levelSeries}>
+                <XAxis
                   dataKey="t"
                   tickFormatter={(t) =>
                     new Date(t).toISOString().split("T")[1].slice(0, 5) // HH:MM UTC
                   }
                 />
+                <YAxis />
                 <Tooltip
                   labelFormatter={(t) =>
                     new Date(t).toISOString().replace("T", " ").replace("Z", " UTC")
                   }
+                  formatter={(val, name) => [`${val} m`, name]}
                 />
-
                 <Legend />
                 <Line
                   type="monotone"
@@ -272,15 +333,15 @@ export default function DamDashboard() {
         <div className="details-grid">
           {Object.entries({
             River: core?.riverName,
-            Coordinates: core?.coordinates,
+            Coordinates: core?.coordinates ? `${core.coordinates.lat?.toFixed(4)}, ${core.coordinates.lng?.toFixed(4)}` : "—",
             "Year Built": core?.constructionYear,
             Operator: core?.operator,
-            "Live Storage": core?.liveStorage + " MCM",
-            "Dead Storage": core?.deadStorage + " MCM",
-            Catchment: core?.catchmentArea,
-            "Surface Area": core?.surfaceArea,
-            Height: core?.height,
-            Length: core?.length,
+            "Live Storage": core?.liveStorage ? core.liveStorage + " MCM" : "—",
+            "Dead Storage": core?.deadStorage ? core.deadStorage + " MCM" : "—",
+            Catchment: core?.catchmentArea || "—",
+            "Surface Area": core?.surfaceArea || "—",
+            Height: core?.height || "—",
+            Length: core?.length || "—",
             Type: core?.damType,
           }).map(([k, v]) => (
             <div key={k} className="detail-item">
@@ -319,30 +380,34 @@ export default function DamDashboard() {
 
       {/* Sensors */}
       <Card title="Sensors">
-        <table className="compact-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Type</th>
-              <th>Status</th>
-              <th>Battery</th>
-              <th>Last</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sensors.map((s) => (
-              <tr key={s._id}>
-                <td>{s.sensorId}</td>
-                <td>{s.type}</td>
-                <td>{s.status}</td>
-                <td>{s.batteryStatus}</td>
-                <td>
-                  {s.lastReading} {s.unit}
-                </td>
+        {sensors?.length ? (
+          <table className="compact-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Battery</th>
+                <th>Last</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {sensors.map((s) => (
+                <tr key={s._id}>
+                  <td>{s.sensorId || "—"}</td>
+                  <td>{s.type || "—"}</td>
+                  <td>{s.status || "—"}</td>
+                  <td>{s.batteryStatus || "—"}</td>
+                  <td>
+                    {s.lastReading ? `${s.lastReading} ${s.unit || ""}` : "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No sensors configured</p>
+        )}
       </Card>
     </div>
   );

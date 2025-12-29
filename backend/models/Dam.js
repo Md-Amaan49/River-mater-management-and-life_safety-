@@ -5,7 +5,10 @@ const damSchema = new mongoose.Schema({
   state: String,
   riverName: String,
   river: String,
-  coordinates: String,
+  coordinates: {
+      lat: Number,
+      lng: Number,
+    },
   damType: String,
   constructionYear: String,
   operator: String,

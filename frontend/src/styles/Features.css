@@ -4,9 +4,65 @@
   min-height: 100vh;
 }
 
+.features-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
 .features-title {
   font-size: 2rem;
-  margin-bottom: 20px;
+  margin: 0;
+}
+
+.dam-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.save-btn {
+  padding: 8px 16px;
+  border: 2px solid #e5e7eb;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.save-btn:hover {
+  border-color: #3b82f6;
+  background: #f8fafc;
+}
+
+.save-btn.saved {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.view-btn {
+  padding: 8px 16px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.view-btn:hover {
+  background: #059669;
 }
 
 .features-grid {
@@ -30,13 +86,72 @@
 .feature-card h3 {
   margin: 0 0 8px;
   font-size: 1.25rem;
+  color: #1f2937;
 }
 
 .feature-card p {
   margin: 6px 0;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.feature-meta {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
 }
 
 .meta {
   font-size: 0.9rem;
   color: #555;
+  margin: 4px 0;
+}
+
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-left: 6px;
+}
+
+.status-badge.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.planned {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-badge.disabled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.admin-only {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.no-features {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.no-features p {
+  margin: 8px 0;
+  color: #6b7280;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.1rem;
+  color: #6b7280;
 }

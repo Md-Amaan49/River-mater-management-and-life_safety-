@@ -12,13 +12,71 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Header section */
+.realtime-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.save-btn {
+  padding: 8px 16px;
+  border: 2px solid #374151;
+  background: #1f2937;
+  color: #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.save-btn:hover {
+  border-color: #00c2ff;
+  background: #1e40af;
+}
+
+.save-btn.saved {
+  background: #00c2ff;
+  color: white;
+  border-color: #00c2ff;
+}
+
+.details-btn {
+  padding: 8px 16px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.details-btn:hover {
+  background: #059669;
+}
+
 /* Heading */
 .p-6 h2 {
   font-size: 26px;
   font-weight: bold;
   color: #00c2ff;
-  margin-bottom: 20px;
-  text-align: center;
+  margin: 0;
+  text-align: left;
 }
 
 /* Sub heading */

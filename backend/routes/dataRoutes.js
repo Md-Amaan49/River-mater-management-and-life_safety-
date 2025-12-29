@@ -8,7 +8,10 @@ import {
   getDamsByRiver,
   getDamDetails,
   getCoreDamInfo,
-  updateCoreDamInfo
+  updateCoreDamInfo,
+  searchRivers,
+  searchDams,
+  globalSearch
 } from "../controllers/dataController.js";
 
 import {
@@ -33,6 +36,11 @@ router.get("/states", getStates);
 router.get("/rivers/:stateId", getRiversByState);
 router.get("/dams/:riverId", getDamsByRiver);
 router.get("/dam/:damId", getDamDetails);
+
+// Search endpoints
+router.get("/search/rivers", searchRivers);
+router.get("/search/dams", searchDams);
+router.get("/search/global", globalSearch);
 
 // NEW: realtime status
 // Create a new sample (append-only history)

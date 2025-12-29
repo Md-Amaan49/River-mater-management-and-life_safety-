@@ -13,7 +13,10 @@ import sensorRoutes from "./routes/sensorRoutes.js";
 import supportingInfoRoutes from "./routes/supportingInfoRoutes.js";
 import featuresRoutes from "./routes/featuresRoutes.js";
 import stateRoutes from "./routes/stateRoutes.js";
-
+import waterFlowRoutes from "./routes/waterFlowRoutes.js";
+import sidebarRoutes from "./routes/sidebarRoutes.js";
+import adminDataRoutes from "./routes/adminDataRoutes.js";
+import alertRoutes from "./routes/alertRoutes.js";
 
 dotenv.config();
 
@@ -36,13 +39,12 @@ app.use("/api/sensors", sensorRoutes);
 app.use("/api/supporting-info", supportingInfoRoutes);
 app.use("/api/features", featuresRoutes);
 
-try {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-} catch (err) {
-  console.error("Failed to start server:", err);
-}
+// serve geojson directory (create backend/geojson and subfolders)
+app.use("/geojson", express.static(path.join(__dirname, "geojson")));
+app.use("/api/waterflow", waterFlowRoutes);
+app.use("/api/sidebar", sidebarRoutes);
+app.use("/api/alerts", alertRoutes);
+app.use("/api", adminDataRoutes);
 
 const PORT = process.env.PORT || 5000;
 

@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/Home.css";
 import damBg from "../assets/images/dam-bg.jpg";
 import Header from "../components/Header";
@@ -44,17 +45,20 @@ const AlertIcon = ({ className }) => (
 );
 
 export default function Home() {
+  const navigate = useNavigate();
+
   return (
     <div className="home">
       <Header />
       {/* Hero Section */}
       <section className="home-hero" style={{ backgroundImage: `url(${damBg})` }}>
         <div className="home-hero__overlay">
-          <h1 className="home-title">RIVER WATER MANAGEMENT AND DAM SAFETY SYSTEM</h1>
-          {/* Button links to Dams Page */}
+          <h1 className="home-title">AAPADAMITRA</h1>
+          <h2>RIVER WATER MANAGEMENT AND LIFE SAFETY SYSTEM</h2>
+          {/* Button links to Water Levels Page */}
           <button
             className="cta"
-            onClick={() => window.open("/dams", "_blank")}
+            onClick={() => navigate("/water-levels")}
           >
             VIEW DAMS
           </button>
@@ -63,25 +67,25 @@ export default function Home() {
 
       {/* Feature Cards */}
       <section className="home-cards">
-        <article className="card" onClick={() => window.open("/water-levels", "_blank")}>
+        <article className="card" onClick={() => navigate("/water-levels")}>
           <DamIcon className="icon teal" />
           <h3>Water Levels</h3>
           <p>Real-time data on reservoir and river levels</p>
         </article>
 
-        <article className="card" onClick={() => window.open("/flow", "_blank")}>
+        <article className="card" onClick={() => navigate("/water-flow")}>
           <WavesIcon className="icon teal" />
           <h3>Flow</h3>
           <p>Flow rates of water through the dam structures</p>
         </article>
 
-        <article className="card" onClick={() => window.open("/water-usage", "_blank")}>
+        <article className="card" onClick={() => navigate("/water-usage")}>
           <ChartIcon className="icon orange" />
           <h3>Water Usage</h3>
           <p>Information about water release &amp; consumption</p>
         </article>
 
-        <article className="card" onClick={() => window.open("/alerts", "_blank")}>
+        <article className="card" onClick={() => navigate("/alerts")}>
           <AlertIcon className="icon orange" />
           <h3>Alerts</h3>
           <p>Stay informed with warnings and notifications</p>

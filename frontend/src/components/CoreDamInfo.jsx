@@ -1,11 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import "../styles/CoreDamInfo.css"; // Assuming you have a CSS file for styling'
+import "../styles/CoreDamInfo.css";
 
 const CoreDamInfo = () => {
   const { damId } = useParams();
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    name: "",
+    state: "",
+    riverName: "",
+    river: "",
+    lat: "",
+    lng: "",
+    damType: "",
+    constructionYear: "",
+    operator: "",
+    maxStorage: "",
+    liveStorage: "",
+    deadStorage: "",
+    catchmentArea: "",
+    surfaceArea: "",
+    height: "",
+    length: "",
+  });
   const [isExisting, setIsExisting] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -14,13 +31,18 @@ const CoreDamInfo = () => {
       try {
         const res = await axios.get(`http://localhost:5000/api/dam/core/${damId}`);
         if (res.data) {
-          setFormData(res.data);
+          // Flatten coordinates for easier form editing
+          const data = {
+            ...res.data,
+            lat: res.data.coordinates?.lat || "",
+            lng: res.data.coordinates?.lng || "",
+          };
+          setFormData(data);
           setIsExisting(true);
         }
       } catch (error) {
         console.log("No existing data found. Creating new entry.");
         setIsExisting(false);
-        setFormData({});
       }
     };
 
@@ -34,16 +56,22 @@ const CoreDamInfo = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const payload = {
+      ...formData,
+      coordinates: {
+        lat: parseFloat(formData.lat) || null,
+        lng: parseFloat(formData.lng) || null,
+      },
+    };
+
     try {
       let res;
       if (isExisting) {
-        // Update
-        res = await axios.put(`http://localhost:5000/api/dam/core/${damId}`, formData);
+        res = await axios.put(`http://localhost:5000/api/dam/core/${damId}`, payload);
         setMessage("Dam information updated successfully.");
       } else {
-        // Save new
-        res = await axios.post(`http://localhost:5000/api/dam/core/${damId}`, formData);
-        setIsExisting(true); // Mark as existing after creating
+        res = await axios.post(`http://localhost:5000/api/dam/core/${damId}`, payload);
+        setIsExisting(true);
         setMessage("Dam information saved successfully.");
       }
     } catch (error) {
@@ -56,8 +84,9 @@ const CoreDamInfo = () => {
     { label: "Dam Name", name: "name" },
     { label: "Location (State)", name: "state" },
     { label: "River Name", name: "riverName" },
-    { label: "River id", name: "river" },
-    { label: "Coordinates", name: "coordinates" },
+    { label: "River ID", name: "river" },
+    { label: "Latitude", name: "lat" },
+    { label: "Longitude", name: "lng" },
     { label: "Dam Type", name: "damType" },
     { label: "Year of Construction", name: "constructionYear" },
     { label: "Operator/Authority", name: "operator" },
@@ -73,7 +102,7 @@ const CoreDamInfo = () => {
   return (
     <div className="core-dam-info">
       <h2>Core Dam Information</h2>
-      
+
       <form onSubmit={handleSubmit}>
         <table>
           <tbody>
@@ -85,6 +114,12 @@ const CoreDamInfo = () => {
                     name={field.name}
                     value={formData[field.name] || ""}
                     onChange={handleChange}
+                    required={
+                      field.name === "lat" ||
+                      field.name === "lng" ||
+                      field.name === "state" ||
+                      field.name === "name"
+                    }
                   />
                 </td>
               </tr>
@@ -93,8 +128,8 @@ const CoreDamInfo = () => {
         </table>
         <button className="update-button" type="submit">
           {isExisting ? "Update" : "Save"}
-        </button>{message && <p className="status-message">{message}</p>}
-
+        </button>
+        {message && <p className="status-message">{message}</p>}
       </form>
     </div>
   );

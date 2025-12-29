@@ -79,7 +79,7 @@ const ProfilePage = () => {
           <button className="btn login-btn" onClick={() => navigate("/login")}>
             Login
           </button>
-          <button className="btn signup-btn" onClick={() => navigate("/signup")}>
+          <button className="btn signup-btn" onClick={() => navigate("/register")}>
             Create Account
           </button>
         </div>
