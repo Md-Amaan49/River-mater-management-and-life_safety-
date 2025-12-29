@@ -53,13 +53,8 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-<<<<<<< HEAD
       const res = await axios.post("http://localhost:5000/api/users/login", {
         email: email.trim(),
-=======
-      const res = await axios.post("https://river-water-management-and-life-safety.onrender.com/api/users/login", {
-        email,
->>>>>>> 2fbe8132cddf7836b51fa74ad1eed608d9105cd1
         password,
       });
 

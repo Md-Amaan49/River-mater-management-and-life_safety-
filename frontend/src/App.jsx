@@ -18,13 +18,9 @@ import Features from "./components/Features";
 import Home from "./pages/Home";
 import WaterLevel from "./pages/WaterLevel";
 import WaterUsagePage from "./pages/WaterUsagePage";
-<<<<<<< HEAD
-import AlertPage from "./pages/Alertpage";
+import AlertPage from "./pages/AlertPage";
 import AlertDashboard from "./components/AlertDashboard";
 import TestAlertDashboard from "./components/TestAlertDashboard";
-=======
-import AlertPage from "./pages/AlertPage";
->>>>>>> 2fbe8132cddf7836b51fa74ad1eed608d9105cd1
 import Layout from "./components/Layout";
 import DamDashboard from "./pages/DamDashboard";
 import About from "./pages/About";

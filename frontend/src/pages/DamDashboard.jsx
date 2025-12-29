@@ -20,18 +20,11 @@ import {
 } from "recharts";
 import "../styles/DamDashboard.css";
 
-<<<<<<< HEAD
 const DAM_API = "http://localhost:5000/api/dam";
 const DATA_API = "http://localhost:5000/api/data";
 const USAGE_API = "http://localhost:5000/api/water-usage";
 const SENSORS_API = "http://localhost:5000/api/sensors";
 const USER_API = "http://localhost:5000/api/users";
-=======
-const DAM_API = "https://river-water-management-and-life-safety.onrender.com/dam";
-const DATA_API = "https://river-water-management-and-life-safety.onrender.com/api/data";
-const USAGE_API = "https://river-water-management-and-life-safety.onrender.com/water-usage";
-const SENSORS_API = "https://river-water-management-and-life-safety.onrender.com/api/sensors";
->>>>>>> 2fbe8132cddf7836b51fa74ad1eed608d9105cd1
 
 // Compact Card
 const Card = ({ title, children, className = "" }) => (
