@@ -210,3 +210,39 @@ export const getProfile = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// GET USER STATISTICS (protected route)
+export const getUserStats = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    
+    // Get saved dams count
+    const savedDamsCount = (await User.findById(userId).select('savedDams')).savedDams?.length || 0;
+    
+    // For now, we'll use placeholder values for other stats
+    // These can be implemented when the respective features are added
+    const stats = {
+      savedDams: savedDamsCount,
+      alertsSubscribed: 0, // Placeholder - implement when alert subscription feature is added
+      recentActivity: 0,   // Placeholder - implement when activity tracking is added
+      customAlerts: 0      // Placeholder - implement when custom alerts feature is added
+    };
+
+    res.json({
+      success: true,
+      stats
+    });
+  } catch (error) {
+    console.error("Error in getUserStats:", error.message);
+    res.status(500).json({ 
+      success: false, 
+      message: "Server error",
+      stats: {
+        savedDams: 0,
+        alertsSubscribed: 0,
+        recentActivity: 0,
+        customAlerts: 0
+      }
+    });
+  }
+};

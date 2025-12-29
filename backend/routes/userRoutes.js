@@ -1,7 +1,7 @@
 // backend/routes/userRoutes.js
 import express from "express";
 import multer from "multer";
-import { registerUser, login, getProfile,refreshToken } from "../controllers/userController.js";
+import { registerUser, login, getProfile, refreshToken, getUserStats } from "../controllers/userController.js";
 import { protect, admin } from "../middleware/authMiddleware.js"; // ✅ path fix (middleware not middlewares)
 import uploadMiddleware from "../middleware/uploadMiddleware.js"; // ✅ keep if you already use it
 import { getSavedDams, toggleSavedDam } from "../controllers/userSavedDamsController.js";
@@ -17,6 +17,7 @@ const upload = multer({ storage });
 router.post("/register", uploadMiddleware.single("profileImage"), registerUser);
 router.post("/login", login);
 router.get("/profile", protect, getProfile); // ✅ only logged-in users can see profile
+router.get("/stats", protect, getUserStats); // ✅ get user statistics
 router.post("/refresh", refreshToken);
 
 // ✅ saved dams

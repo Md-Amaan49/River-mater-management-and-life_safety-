@@ -19,6 +19,12 @@ import {
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
+  const [userStats, setUserStats] = useState({
+    savedDams: 0,
+    alertsSubscribed: 0,
+    recentActivity: 0,
+    customAlerts: 0
+  });
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -44,6 +50,24 @@ const ProfilePage = () => {
     }
   };
 
+  const fetchUserStats = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const res = await axios.get("https://river-water-management-and-life-safety.onrender.com/api/users/stats", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.data.success) {
+        setUserStats(res.data.stats);
+      }
+    } catch (error) {
+      console.error("Error fetching user stats:", error);
+      // Keep default values if error occurs
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     setUser(null);
@@ -64,6 +88,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     fetchProfile();
+    fetchUserStats();
   }, []);
 
   if (loading) {
@@ -112,35 +137,35 @@ const ProfilePage = () => {
 
       {/* Summary Cards */}
       <div className="summary-cards">
-        <div className="card clickable">
+        <div className="card clickable" onClick={() => navigate('/water-levels')}>
           <FaDatabase className="card-icon" />
           <h3>Dams Saved</h3>
-          <p>12</p>
+          <p>{userStats.savedDams}</p>
         </div>
-        <div className="card clickable">
+        <div className="card clickable" onClick={() => navigate('/alerts')}>
           <FaBell className="card-icon" />
           <h3>Alerts Subscribed</h3>
-          <p>8</p>
+          <p>{userStats.alertsSubscribed}</p>
         </div>
         <div className="card clickable">
           <FaHistory className="card-icon" />
           <h3>Recent Activity</h3>
-          <p>5 Events</p>
+          <p>{userStats.recentActivity} Events</p>
         </div>
         <div className="card clickable">
           <FaCogs className="card-icon" />
           <h3>Custom Alerts Set</h3>
-          <p>4</p>
+          <p>{userStats.customAlerts}</p>
         </div>
       </div>
 
       {/* Settings Panel */}
       <div className="settings-panel">
         <div className="settings-column">
-          <div className="setting-item clickable">
+          <div className="setting-item clickable" onClick={() => navigate('/water-levels')}>
             <FaDatabase /> My Saved Dams
           </div>
-          <div className="setting-item clickable">
+          <div className="setting-item clickable" onClick={() => navigate('/alerts')}>
             <FaCogs /> Custom Alert Settings
           </div>
           <div className="setting-item clickable">
@@ -177,7 +202,7 @@ const ProfilePage = () => {
         </div>
 
         <div className="settings-column">
-          <div className="setting-item clickable">
+          <div className="setting-item clickable" onClick={handleEditProfile}>
             <FaUser /> Account
           </div>
           <div className="setting-item clickable">
