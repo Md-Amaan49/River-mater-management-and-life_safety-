@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import "../styles/Safety.css";
 
-const API_BASE = "http://localhost:5000/api/safety";
+const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api/safety";
 
 export default function Safety() {
   const { damId } = useParams();

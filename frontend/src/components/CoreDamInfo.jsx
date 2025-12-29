@@ -29,7 +29,7 @@ const CoreDamInfo = () => {
   useEffect(() => {
     const fetchDamDetails = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/dam/core/${damId}`);
+        const res = await axios.get(`https://river-water-management-and-life-safety.onrender.com/api/dam/core/${damId}`);
         if (res.data) {
           // Flatten coordinates for easier form editing
           const data = {
@@ -67,10 +67,10 @@ const CoreDamInfo = () => {
     try {
       let res;
       if (isExisting) {
-        res = await axios.put(`http://localhost:5000/api/dam/core/${damId}`, payload);
+        res = await axios.put(`https://river-water-management-and-life-safety.onrender.com/api/dam/core/${damId}`, payload);
         setMessage("Dam information updated successfully.");
       } else {
-        res = await axios.post(`http://localhost:5000/api/dam/core/${damId}`, payload);
+        res = await axios.post(`https://river-water-management-and-life-safety.onrender.com/api/dam/core/${damId}`, payload);
         setIsExisting(true);
         setMessage("Dam information saved successfully.");
       }

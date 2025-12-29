@@ -7,8 +7,8 @@ import { useNavigate } from "react-router-dom";
 import "../styles/WaterFlowPage.css"; // You can rename to RiverMapPage.css if you want
 
 // Base API for backend
-const DAM_API = "http://localhost:5000/api/dam";
-const USER_API = "http://localhost:5000/api/users";
+const DAM_API = "https://river-water-management-and-life-safety.onrender.com/api/dam";
+const USER_API = "https://river-water-management-and-life-safety.onrender.com/api/users";
 
 // Fix default Leaflet icon path issue
 delete L.Icon.Default.prototype._getIconUrl;

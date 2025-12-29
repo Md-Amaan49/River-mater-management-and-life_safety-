@@ -143,7 +143,7 @@ const Register = () => {
       
       if (image) formData.append("profileImage", image);
 
-      const res = await axios.post("http://localhost:5000/api/users/register", formData, {
+      const res = await axios.post("https://river-water-management-and-life-safety.onrender.com/api/users/register", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

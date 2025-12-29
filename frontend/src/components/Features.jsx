@@ -4,7 +4,7 @@ import axios from "axios";
 import "../styles/Features.css";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api";
 const USER_API = `${API_BASE}/users`;
 
 const Features = ({ damId, token }) => {

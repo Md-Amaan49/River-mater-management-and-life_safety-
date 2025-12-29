@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import "../styles/AdminDataForms.css";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api";
 
 export default function AdminDataForms() {
   const { damId } = useParams();

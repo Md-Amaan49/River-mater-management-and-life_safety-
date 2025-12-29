@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import "../styles/SupportingInfo.css";
 
-const API_BASE = "http://localhost:5000/api/supporting-info";
+const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api/supporting-info";
 
 export default function SupportingInfo() {
   const { damId } = useParams();

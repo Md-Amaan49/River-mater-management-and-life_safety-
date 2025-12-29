@@ -4,8 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/RealtimeDamStatus.css";
 
-const API_BASE = "http://localhost:5000/api/data";
-const USER_API = "http://localhost:5000/api/users";
+const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api/data";
+const USER_API = "https://river-water-management-and-life-safety.onrender.com/api/users";
 
 export default function RealtimeDamStatus() {
   const { damId } = useParams();

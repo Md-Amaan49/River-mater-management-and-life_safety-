@@ -20,7 +20,7 @@ const AddDataForm = () => {
 
   const [message, setMessage] = useState("");
 
-  const API_BASE = "http://localhost:5000/api/data";
+  const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api/data";
 
   useEffect(() => {
     axios.get(`${API_BASE}/states`).then((res) => setStates(res.data));
