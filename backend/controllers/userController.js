@@ -216,8 +216,27 @@ export const getUserStats = async (req, res) => {
   try {
     const userId = req.user._id;
     
-    // Get saved dams count
-    const savedDamsCount = (await User.findById(userId).select('savedDams')).savedDams?.length || 0;
+    // Get user with populated saved dams (same as sidebar)
+    const user = await User.findById(userId).populate({
+      path: "savedDams",
+      select: "name state river"
+    });
+    
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "User not found",
+        stats: {
+          savedDams: 0,
+          alertsSubscribed: 0,
+          recentActivity: 0,
+          customAlerts: 0
+        }
+      });
+    }
+    
+    // Get actual saved dams count (same logic as sidebar)
+    const savedDamsCount = user.savedDams ? user.savedDams.length : 0;
     
     // For now, we'll use placeholder values for other stats
     // These can be implemented when the respective features are added
