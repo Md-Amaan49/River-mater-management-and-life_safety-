@@ -30,7 +30,7 @@ const ProfilePage = () => {
         return; // not logged in
       }
 
-      const res = await axios.get("http://localhost:5000/api/users/profile", {
+      const res = await axios.get("https://river-water-management-and-life-safety.onrender.com/api/users/profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -93,7 +93,7 @@ const ProfilePage = () => {
       {/* Top Profile Info */}
       <div className="profile-header">
           <img 
-            src={`http://localhost:5000${user.profileImage}`} 
+            src={`https://river-water-management-and-life-safety.onrender.com${user.profileImage}`} 
             alt="Profile" 
             style={{ width: "100px", height: "100px", borderRadius: "50%" }} 
           />

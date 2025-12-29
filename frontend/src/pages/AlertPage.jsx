@@ -3,7 +3,7 @@ import axios from "axios";
 import "../styles/AlertPage.css";
 import { useNavigate } from "react-router-dom";
 
-const BASE_API = "http://localhost:5000/api";     // server base
+const BASE_API = "https://river-water-management-and-life-safety.onrender.com/api";     // server base
 const DATA_API = `${BASE_API}/data`;               // states/rivers/dams endpoints
 const USER_API = `${BASE_API}/users`;              // saved-dams endpoint
 const SAFETY_API = `${BASE_API}/safety`;           // safety endpoints
