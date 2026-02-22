@@ -39,7 +39,8 @@ export const addRiver = async (req, res) => {
 
 export const getRiversByState = async (req, res) => {
   try {
-    const rivers = await River.find({ stateId: req.params.stateId });
+    // The River model has 'state' field, not 'stateId'
+    const rivers = await River.find({ state: req.params.stateId });
     res.status(200).json(rivers);
   } catch (error) {
     console.error("Error fetching rivers:", error);
@@ -176,17 +177,17 @@ export const saveOrUpdateCoreDamInfo = async (req, res) => {
 };// Get all dam points (for default view)
 export const getAllDamPoints = async (req, res) => {
   try {
-    const dams = await Dam.find({}, "name state river coordinates");
+    const dams = await Dam.find({}, "name state river coordinates riverName");
     const points = dams
-      .filter(d => d.coordinates)
-      .map(d => {
-        let coords = null;
-        if (typeof d.coordinates === "string") {
-          const parts = d.coordinates.split(",").map(p => p.trim());
-          if (parts.length === 2) coords = [Number(parts[0]), Number(parts[1])];
-        }
-        return { _id: d._id, name: d.name, state: d.state, river: d.river, coordinates: coords };
-      });
+      .filter(d => d.coordinates && d.coordinates.lat && d.coordinates.lng)
+      .map(d => ({
+        _id: d._id,
+        name: d.name,
+        state: d.state,
+        river: d.river,
+        riverName: d.riverName,
+        coordinates: d.coordinates
+      }));
     res.json(points);
   } catch (err) {
     res.status(500).json({ message: "Error fetching dam points", error: err.message });
@@ -200,13 +201,15 @@ export const getDamPointsByState = async (req, res) => {
     const state = await State.findById(stateId);
     if (!state) return res.status(404).json({ message: "State not found" });
     const dams = await Dam.find({ state: state.name }).lean();
-    const points = dams.map(d => ({
-      _id: d._id,
-      name: d.name,
-      coordinates: d.coordinates ? [d.coordinates.lat, d.coordinates.lng] : null,
-      state: d.state || null,
-      place: d.place || null
-    }));
+    const points = dams
+      .filter(d => d.coordinates && d.coordinates.lat && d.coordinates.lng)
+      .map(d => ({
+        _id: d._id,
+        name: d.name,
+        coordinates: d.coordinates,
+        state: d.state || null,
+        riverName: d.riverName || null
+      }));
     res.json(points);
   } catch (err) {
     console.error(err);
@@ -217,16 +220,17 @@ export const getDamPointsByState = async (req, res) => {
 export const getDamPointsByRiver = async (req, res) => {
   try {
     const { riverId } = req.params;
-    const dams = await Dam.find({ river: riverId }, "name state river coordinates");
-    const points = dams.map(d => ({
-      _id: d._id,
-      name: d.name,
-      state: d.state,
-      river: d.river,
-      coordinates: d.coordinates 
-        ? d.coordinates.split(",").map(n => Number(n.trim())) 
-        : null
-    }));
+    const dams = await Dam.find({ river: riverId }, "name state river coordinates riverName");
+    const points = dams
+      .filter(d => d.coordinates && d.coordinates.lat && d.coordinates.lng)
+      .map(d => ({
+        _id: d._id,
+        name: d.name,
+        state: d.state,
+        river: d.river,
+        riverName: d.riverName,
+        coordinates: d.coordinates
+      }));
     res.json(points);
   } catch (err) {
     res.status(500).json({ message: "Error fetching dams by river", error: err.message });

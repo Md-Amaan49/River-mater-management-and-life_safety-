@@ -7,8 +7,10 @@ import { useNavigate } from "react-router-dom";
 import "../styles/WaterFlowPage.css"; // You can rename to RiverMapPage.css if you want
 
 // Base API for backend
-const DAM_API = "https://river-water-management-and-life-safety.onrender.com/api/dam";
-const USER_API = "https://river-water-management-and-life-safety.onrender.com/api/users";
+const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api";
+const DAM_API = `${API_BASE}/dam`;
+const DATA_API = `${API_BASE}/data`;
+const USER_API = `${API_BASE}/users`;
 
 // Fix default Leaflet icon path issue
 delete L.Icon.Default.prototype._getIconUrl;
@@ -83,39 +85,35 @@ const RiverMapPage = () => {
 
   // Normalize coordinate formats safely
   const normalizeDamCoords = (data) => {
-  return data
-    .map((d) => {
-      let lat, lng;
+    return data
+      .map((d) => {
+        let lat, lng;
 
-      // 1️⃣ case: coordinates as object
-      if (d.coordinates && typeof d.coordinates === "object") {
-        lat = d.coordinates.lat ?? d.coordinates[0];
-        lng = d.coordinates.lng ?? d.coordinates[1];
-      }
+        // Check if coordinates exist and are valid
+        if (d.coordinates && typeof d.coordinates === "object") {
+          lat = d.coordinates.lat;
+          lng = d.coordinates.lng;
+        }
 
-      // 2️⃣ case: stored as lat/lng fields directly
-      if (!lat && d.lat) lat = d.lat;
-      if (!lng && d.lng) lng = d.lng;
+        // Validate coordinates
+        if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
+          console.warn(`Invalid coordinates for dam ${d.name}:`, d.coordinates);
+          return null;
+        }
 
-      // 3️⃣ case: stored as string
-      if (typeof d.coordinates === "string") {
-        const parts = d.coordinates.split(",").map(Number);
-        lat = parts[0];
-        lng = parts[1];
-      }
-
-      // 4️⃣ final check
-      if (!lat || !lng || isNaN(lat) || isNaN(lng)) return null;
-
-      return { ...d, coordinates: [lat, lng] };
-    })
-    .filter(Boolean);
-};
+        // Return dam with coordinates as [lat, lng] array for Leaflet
+        return { 
+          ...d, 
+          coordinates: [parseFloat(lat), parseFloat(lng)]
+        };
+      })
+      .filter(Boolean);
+  };
 
   // Fetch all distinct states (from dams collection)
   useEffect(() => {
     axios
-      .get(`${DAM_API}/states`)
+      .get(`${DATA_API}/states`)
       .then((res) => setStates(res.data))
       .catch((err) => console.error("Error fetching states:", err));
     
@@ -124,26 +122,50 @@ const RiverMapPage = () => {
 
   // When state selected
   useEffect(() => {
-    if (!selectedState) return;
+    if (!selectedState) {
+      setRivers([]);
+      setDams([]);
+      setSelectedRiver("");
+      setSelectedDam("");
+      setRiverLine(null);
+      return;
+    }
 
     // Fetch rivers for that state
     axios
-      .get(`${DAM_API}/rivers/${selectedState}`)
-      .then((res) => setRivers(res.data))
-      .catch((err) => console.error("Error fetching rivers:", err));
-
-    // Fetch all dams in that state
-    axios
-      .get(`${DAM_API}/by-state/${selectedState}`)
+      .get(`${DATA_API}/rivers/${selectedState}`)
       .then((res) => {
-        const valid = normalizeDamCoords(res.data);
+        console.log("Rivers API response:", res.data);
+        console.log("Number of rivers found:", res.data?.length || 0);
+        setRivers(res.data);
+        
+        // Fetch all dams for all rivers in this state
+        return Promise.all(
+          res.data.map(river => 
+            axios.get(`${DATA_API}/dams/${river._id}`)
+              .then(damRes => damRes.data)
+              .catch(err => {
+                console.warn(`Error fetching dams for river ${river.name}:`, err);
+                return [];
+              })
+          )
+        );
+      })
+      .then((allDamsArrays) => {
+        // Flatten array of arrays into single array
+        const allDams = allDamsArrays.flat();
+        console.log("All dams in state:", allDams);
+        const valid = normalizeDamCoords(allDams);
         setDams(valid);
         if (valid.length > 0) {
           setMapCenter(valid[0].coordinates);
           setZoom(7);
         }
       })
-      .catch((err) => console.error("Error fetching dams by state:", err));
+      .catch((err) => {
+        console.error("Error fetching rivers:", err);
+        console.error("Error details:", err.response?.data);
+      });
 
     // Reset downstream selections
     setSelectedRiver("");
@@ -153,11 +175,18 @@ const RiverMapPage = () => {
 
   // When river selected
   useEffect(() => {
-    if (!selectedRiver) return;
+    if (!selectedRiver) {
+      // If no river selected but state is selected, keep showing all state dams
+      // (already loaded in state effect)
+      setSelectedDam("");
+      setRiverLine(null);
+      return;
+    }
 
     axios
-      .get(`${DAM_API}/by-river/${selectedRiver}`)
+      .get(`${DATA_API}/dams/${selectedRiver}`)
       .then((res) => {
+        console.log("Dams for river:", res.data);
         const valid = normalizeDamCoords(res.data);
         setDams(valid);
         if (valid.length > 0) {
@@ -187,10 +216,9 @@ const RiverMapPage = () => {
     if (dam && dam.coordinates) {
       setMapCenter(dam.coordinates);
       setZoom(11);
-      setDams([dam]); // show only selected dam
       setRiverLine(null);
     }
-  }, [selectedDam]);
+  }, [selectedDam, dams]);
 
   return (
     <div className="river-map-page">
@@ -213,7 +241,7 @@ const RiverMapPage = () => {
             onChange={(e) => setSelectedRiver(e.target.value)}
             disabled={!selectedState}
           >
-            <option value="">Select River</option>
+            <option value="">All Rivers</option>
             {rivers.map((r) => (
               <option key={r._id || r.name} value={r._id || r.name}>
                 {r.name}
@@ -225,9 +253,9 @@ const RiverMapPage = () => {
           <select
             value={selectedDam}
             onChange={(e) => setSelectedDam(e.target.value)}
-            disabled={!selectedRiver}
+            disabled={!selectedState}
           >
-            <option value="">Select Dam</option>
+            <option value="">All Dams</option>
             {dams.map((d) => (
               <option key={d._id} value={d._id}>
                 {d.name}
@@ -249,7 +277,14 @@ const RiverMapPage = () => {
 
           {/* Dams Markers */}
           {dams
-            .filter((d) => d.coordinates && d.coordinates.length === 2)
+            .filter((d) => {
+              // Filter based on selected dam
+              if (selectedDam) {
+                return d._id === selectedDam;
+              }
+              // Otherwise show all dams in current list
+              return d.coordinates && d.coordinates.length === 2;
+            })
             .map((dam) => (
               <Marker key={dam._id} position={dam.coordinates}>
                 <Popup>
