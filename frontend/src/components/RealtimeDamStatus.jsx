@@ -22,7 +22,12 @@ export default function RealtimeDamStatus() {
     minLevel: "",
     inflowRate: "",
     outflowRate: "",
-    spillwayDischarge: "",
+    rainfallRate: "",
+    evaporationRate: "",
+    inflowFromUpstreamDam: "",
+    outflowToDownstreamDam: "",
+    upstreamRiverVelocity: "",
+    downstreamRiverVelocity: "",
     source: "manual",
     gateStatus: [{ gateNumber: 1, status: "closed", percentageOpen: 0 }],
   });
@@ -61,6 +66,20 @@ export default function RealtimeDamStatus() {
   }, [damId, token]);
 
   const onChange = (k, v) => setForm((prev) => ({ ...prev, [k]: v }));
+
+  // Calculate totalInflow and spillwayDischarge
+  const calculateTotalInflow = () => {
+    const inflowRate = form.inflowRate || 0;
+    const inflowFromUpstream = form.inflowFromUpstreamDam || 0;
+    const rainfall = form.rainfallRate || 0;
+    return inflowRate + inflowFromUpstream + rainfall;
+  };
+
+  const calculateSpillwayDischarge = () => {
+    const outflowRate = form.outflowRate || 0;
+    const outflowToDownstream = form.outflowToDownstreamDam || 0;
+    return outflowRate + outflowToDownstream;
+  };
 
   // Toggle save dam
   const toggleSave = async () => {
@@ -199,13 +218,113 @@ export default function RealtimeDamStatus() {
         </label>
 
         <label className="flex flex-col">
-          <span className="font-medium">Spillway Discharge (m³/s)</span>
+          <span className="font-medium">Rainfall Rate (m³/s)</span>
           <input
-            value={form.spillwayDischarge || ""}
+            value={form.rainfallRate || ""}
             onChange={(e) =>
-              onChange("spillwayDischarge", e.target.value ? Number(e.target.value) : "")
+              onChange("rainfallRate", e.target.value ? Number(e.target.value) : "")
             }
             type="number"
+            step="0.01"
+            placeholder="e.g., 15.5"
+            className="border rounded p-2"
+          />
+        </label>
+
+        <label className="flex flex-col">
+          <span className="font-medium">Evaporation Rate (m³/s)</span>
+          <input
+            value={form.evaporationRate || ""}
+            onChange={(e) =>
+              onChange("evaporationRate", e.target.value ? Number(e.target.value) : "")
+            }
+            type="number"
+            step="0.01"
+            placeholder="e.g., 5.2"
+            className="border rounded p-2"
+          />
+        </label>
+
+        <label className="flex flex-col">
+          <span className="font-medium">Total Inflow (m³/s) - Calculated</span>
+          <input
+            value={calculateTotalInflow().toFixed(2)}
+            type="number"
+            className="border rounded p-2 bg-gray-100"
+            readOnly
+            disabled
+          />
+          <span className="text-xs text-gray-500 mt-1">
+            = Inflow Rate + Inflow from Upstream + Rainfall Rate
+          </span>
+        </label>
+
+        <label className="flex flex-col">
+          <span className="font-medium">Spillway Discharge (m³/s) - Calculated</span>
+          <input
+            value={calculateSpillwayDischarge().toFixed(2)}
+            type="number"
+            className="border rounded p-2 bg-gray-100"
+            readOnly
+            disabled
+          />
+          <span className="text-xs text-gray-500 mt-1">
+            = Outflow Rate + Outflow to Downstream
+          </span>
+        </label>
+
+        <label className="flex flex-col">
+          <span className="font-medium">Inflow from Upstream Dam (m³/s)</span>
+          <input
+            value={form.inflowFromUpstreamDam || ""}
+            onChange={(e) =>
+              onChange("inflowFromUpstreamDam", e.target.value ? Number(e.target.value) : "")
+            }
+            type="number"
+            step="0.01"
+            placeholder="e.g., 125.5"
+            className="border rounded p-2"
+          />
+        </label>
+
+        <label className="flex flex-col">
+          <span className="font-medium">Outflow to Downstream Dam (m³/s)</span>
+          <input
+            value={form.outflowToDownstreamDam || ""}
+            onChange={(e) =>
+              onChange("outflowToDownstreamDam", e.target.value ? Number(e.target.value) : "")
+            }
+            type="number"
+            step="0.01"
+            placeholder="e.g., 98.3"
+            className="border rounded p-2"
+          />
+        </label>
+
+        <label className="flex flex-col">
+          <span className="font-medium">Upstream River Velocity (m/s)</span>
+          <input
+            value={form.upstreamRiverVelocity || ""}
+            onChange={(e) =>
+              onChange("upstreamRiverVelocity", e.target.value ? Number(e.target.value) : "")
+            }
+            type="number"
+            step="0.01"
+            placeholder="e.g., 2.5"
+            className="border rounded p-2"
+          />
+        </label>
+
+        <label className="flex flex-col">
+          <span className="font-medium">Downstream River Velocity (m/s)</span>
+          <input
+            value={form.downstreamRiverVelocity || ""}
+            onChange={(e) =>
+              onChange("downstreamRiverVelocity", e.target.value ? Number(e.target.value) : "")
+            }
+            type="number"
+            step="0.01"
+            placeholder="e.g., 3.2"
             className="border rounded p-2"
           />
         </label>

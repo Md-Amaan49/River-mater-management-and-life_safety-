@@ -22,6 +22,10 @@ const CoreDamInfo = () => {
     surfaceArea: "",
     height: "",
     length: "",
+    upstreamDam: "",
+    upstreamDamDistance: "",
+    downstreamDam: "",
+    downstreamDamDistance: "",
   });
   const [isExisting, setIsExisting] = useState(false);
   const [message, setMessage] = useState("");
@@ -97,6 +101,10 @@ const CoreDamInfo = () => {
     { label: "Surface Area", name: "surfaceArea" },
     { label: "Height", name: "height" },
     { label: "Length", name: "length" },
+    { label: "Upstream Dam", name: "upstreamDam" },
+    { label: "Upstream Dam Distance (km)", name: "upstreamDamDistance" },
+    { label: "Downstream Dam", name: "downstreamDam" },
+    { label: "Downstream Dam Distance (km)", name: "downstreamDamDistance" },
   ];
 
   return (

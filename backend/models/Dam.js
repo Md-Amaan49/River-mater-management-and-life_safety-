@@ -19,6 +19,10 @@ const damSchema = new mongoose.Schema({
   surfaceArea: String,
   height: String,
   length: String,
+  upstreamDam: String,
+  upstreamDamDistance: Number,
+  downstreamDam: String,
+  downstreamDamDistance: Number,
 }, { timestamps: true });
 
 const Dam = mongoose.model("Dam", damSchema);

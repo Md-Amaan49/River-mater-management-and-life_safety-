@@ -139,6 +139,10 @@ const RiverMapPage = () => {
         console.log("Number of rivers found:", res.data?.length || 0);
         setRivers(res.data);
         
+        // Get the selected state name for filtering
+        const selectedStateName = states.find(s => s._id === selectedState)?.name;
+        console.log("Selected state name:", selectedStateName);
+        
         // Fetch all dams for all rivers in this state
         return Promise.all(
           res.data.map(river => 
@@ -149,13 +153,25 @@ const RiverMapPage = () => {
                 return [];
               })
           )
-        );
+        ).then(allDamsArrays => ({ allDamsArrays, selectedStateName }));
       })
-      .then((allDamsArrays) => {
+      .then(({ allDamsArrays, selectedStateName }) => {
         // Flatten array of arrays into single array
         const allDams = allDamsArrays.flat();
-        console.log("All dams in state:", allDams);
-        const valid = normalizeDamCoords(allDams);
+        console.log("All dams before filtering:", allDams);
+        
+        // Filter dams to only include those in the selected state
+        const stateDams = allDams.filter(dam => {
+          const damState = dam.state || dam.stateName || "";
+          const matches = damState === selectedStateName;
+          if (!matches && damState) {
+            console.log(`Filtering out dam ${dam.name} - state: ${damState} (expected: ${selectedStateName})`);
+          }
+          return matches;
+        });
+        
+        console.log("Dams after state filtering:", stateDams);
+        const valid = normalizeDamCoords(stateDams);
         setDams(valid);
         if (valid.length > 0) {
           setMapCenter(valid[0].coordinates);
@@ -171,7 +187,7 @@ const RiverMapPage = () => {
     setSelectedRiver("");
     setSelectedDam("");
     setRiverLine(null);
-  }, [selectedState]);
+  }, [selectedState, states]);
 
   // When river selected
   useEffect(() => {
@@ -183,11 +199,24 @@ const RiverMapPage = () => {
       return;
     }
 
+    // Get the selected state name for filtering
+    const selectedStateName = states.find(s => s._id === selectedState)?.name;
+
     axios
       .get(`${DATA_API}/dams/${selectedRiver}`)
       .then((res) => {
-        console.log("Dams for river:", res.data);
-        const valid = normalizeDamCoords(res.data);
+        console.log("Dams for river (before filtering):", res.data);
+        
+        // Filter dams to only include those in the selected state
+        const filteredDams = selectedStateName 
+          ? res.data.filter(dam => {
+              const damState = dam.state || dam.stateName || "";
+              return damState === selectedStateName;
+            })
+          : res.data;
+        
+        console.log("Dams for river (after filtering):", filteredDams);
+        const valid = normalizeDamCoords(filteredDams);
         setDams(valid);
         if (valid.length > 0) {
           setMapCenter(valid[0].coordinates);
@@ -207,7 +236,7 @@ const RiverMapPage = () => {
       .catch((err) => console.error("Error fetching dams by river:", err));
 
     setSelectedDam("");
-  }, [selectedRiver]);
+  }, [selectedRiver, selectedState, states]);
 
   // When dam selected
   useEffect(() => {
