@@ -23,6 +23,17 @@ const damSchema = new mongoose.Schema({
   upstreamDamDistance: Number,
   downstreamDam: String,
   downstreamDamDistance: Number,
+  // Basin Coordination Fields
+  basinName: String,
+  basinPriorityIndex: Number, // 1-10 scale
+  coordinatedReleasePlan: String, // Description of release coordination plan
+  upstreamReleaseSchedule: String, // Schedule details
+  downstreamAbsorptionCapacity: Number, // m³/s
+  basinCoordinationStatus: { 
+    type: String, 
+    enum: ["Active", "Inactive", "Pending", "Under Review"], 
+    default: "Inactive" 
+  },
 }, { timestamps: true });
 
 const Dam = mongoose.model("Dam", damSchema);

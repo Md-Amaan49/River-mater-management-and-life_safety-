@@ -6,7 +6,9 @@
   "scripts": {
      "dev": "nodemon backend/server.js",
     "build": " npm install && npm install --prefix frontend && npm run build --prefix frontend",
-    "start": "node backend/server.js"
+    "start": "node backend/server.js",
+    "populate-advanced": "node backend/scripts/populateAdvancedDamData.js",
+    "verify-advanced": "node backend/scripts/verifyAdvancedData.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

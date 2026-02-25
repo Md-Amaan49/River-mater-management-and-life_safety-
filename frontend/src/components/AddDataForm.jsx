@@ -79,43 +79,30 @@ const AddDataForm = () => {
   };
 
   const featureCards = [
-    { id: 1, icon: "🧠", title: "Core Dam Information" },
-    { id: 2, icon: "🌊", title: "Real-time Water Level & Flow" },
-    { id: 3, icon: "📊", title: "Water Usage Information" },
-    { id: 4, icon: "🛰️", title: "Sensor & Telemetry Integration" },
-    { id: 5, icon: "📁", title: "Supporting Information" },
-    { id: 6, icon: "🔧", title: "Optional Advanced Features" },
-    { id: 7, icon: "🚨", title: "Safety & Alert System" },
-    { id: 8, icon: "📋", title: "Admin Data Management" }
+    { id: 1, icon: "🧠", title: "Core Dam Information", route: "/core-dam-info" },
+    { id: 2, icon: "🌊", title: "Real-time Water Level & Flow", route: "/realtime" },
+    { id: 3, icon: "📊", title: "Water Usage Information", route: "/water-usage" },
+    { id: 4, icon: "🛰️", title: "Sensor & Telemetry Integration", route: "/sensors" },
+    { id: 5, icon: "📁", title: "Supporting Information", route: "/supporting-info" },
+    { id: 6, icon: "🔧", title: "Optional Advanced Features", route: "/features" },
+    { id: 7, icon: "🚨", title: "Safety & Alert System", route: "/safety" },
+    { id: 8, icon: "📋", title: "Admin Data Management", route: "/admin-data" },
+    { id: 9, icon: "📐", title: "Reservoir Geometry & Physical Characteristics", route: "/reservoir-geometry" },
+    { id: 10, icon: "💧", title: "Storage & Capacity Parameters", route: "/storage-capacity" },
+    { id: 11, icon: "🌤️", title: "Forecast & Meteorological Data", route: "/forecast-meteo" },
+    { id: 12, icon: "🔮", title: "Predictive & Simulation Outputs", route: "/predictive-simulation" },
+    { id: 13, icon: "📜", title: "Historical & Risk Reference Data", route: "/historical-risk" },
+    { id: 14, icon: "🏗️", title: "Structural Health Monitoring", route: "/structural-health" },
+    { id: 15, icon: "🚪", title: "Gate & Spillway Control System", route: "/gate-spillway" },
+    { id: 16, icon: "⚠️", title: "Downstream Risk & Safety Parameters", route: "/downstream-risk" },
+    { id: 17, icon: "🔷", title: "Basin-Level Aggregated Fields", route: "/basin-aggregated" }
   ];
 
-  const handleCardClick = (cardId) => {
-    if (cardId === 1 && selectedDam) {
-      navigate(`/core-dam-info/${selectedDam}`);
-    }
-    else if (cardId === 2 && selectedDam) {
-      navigate(`/realtime/${selectedDam}`);
-    }
-    else if (cardId === 3 && selectedDam) {
-      navigate(`/water-usage/${selectedDam}`);
-    }
-    else if (cardId === 4 && selectedDam) {
-      navigate(`/sensors/${selectedDam}`);
-    }
-    else if (cardId === 5 && selectedDam) {
-      navigate(`/supporting-info/${selectedDam}`);
-    }
-    else if (cardId === 6 && selectedDam) {
-      navigate(`/features/${selectedDam}`);
-    }
-    else if (cardId === 7 && selectedDam) {
-      navigate(`/safety/${selectedDam}`);
-    }
-    else if (cardId === 8 && selectedDam) {
-      navigate(`/admin-data/${selectedDam}`);
-    }
-    else {
-      console.log(`Feature ${cardId} clicked`);
+  const handleCardClick = (card) => {
+    if (selectedDam && card.route) {
+      navigate(`${card.route}/${selectedDam}`);
+    } else {
+      setMessage("Please select a dam first");
     }
   };
   const handleDamSelect = (value) => {
@@ -201,7 +188,7 @@ const AddDataForm = () => {
             <div
               key={card.id}
               className="feature-card"
-              onClick={() => handleCardClick(card.id)}
+              onClick={() => handleCardClick(card)}
             >
               <div className="card-icon">{card.icon}</div>
               <div className="card-title">{card.title}</div>

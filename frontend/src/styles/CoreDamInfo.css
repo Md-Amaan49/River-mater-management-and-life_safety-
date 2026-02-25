@@ -72,3 +72,58 @@ input:focus {
   color: green;
   font-weight: bold;
 }
+
+/* Section Headers */
+.section-header td {
+  padding: 20px 10px 10px;
+  border-top: 2px solid #e0e0e0;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #007bff;
+  font-weight: 600;
+}
+
+.section-header:first-child td {
+  border-top: none;
+  padding-top: 10px;
+}
+
+/* Textarea styling */
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: var(--input-bg, #f9f9f9);
+  color: var(--input-text, #000);
+  font-family: 'Segoe UI', sans-serif;
+  resize: vertical;
+  transition: border 0.3s;
+}
+
+textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Select styling */
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: var(--input-bg, #f9f9f9);
+  color: var(--input-text, #000);
+  cursor: pointer;
+  transition: border 0.3s;
+}
+
+select:focus {
+  border-color: #007bff;
+  outline: none;
+}

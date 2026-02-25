@@ -18,6 +18,7 @@ import waterFlowRoutes from "./routes/waterFlowRoutes.js";
 import sidebarRoutes from "./routes/sidebarRoutes.js";
 import adminDataRoutes from "./routes/adminDataRoutes.js";
 import alertRoutes from "./routes/alertRoutes.js";
+import advancedDataRoutes from "./routes/advancedDataRoutes.js";
 
 dotenv.config();
 
@@ -50,6 +51,7 @@ app.use("/api/waterflow", waterFlowRoutes);
 app.use("/api/sidebar", sidebarRoutes);
 app.use("/api/alerts", alertRoutes);
 app.use("/api", adminDataRoutes);
+app.use("/api/dam", advancedDataRoutes);
 
 // Serve frontend
 app.use(express.static(path.join(__dirname, "../frontend/dist")));

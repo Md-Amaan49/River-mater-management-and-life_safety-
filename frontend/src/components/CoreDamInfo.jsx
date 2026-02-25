@@ -26,6 +26,13 @@ const CoreDamInfo = () => {
     upstreamDamDistance: "",
     downstreamDam: "",
     downstreamDamDistance: "",
+    // Basin Coordination Fields
+    basinName: "",
+    basinPriorityIndex: "",
+    coordinatedReleasePlan: "",
+    upstreamReleaseSchedule: "",
+    downstreamAbsorptionCapacity: "",
+    basinCoordinationStatus: "",
   });
   const [isExisting, setIsExisting] = useState(false);
   const [message, setMessage] = useState("");
@@ -95,16 +102,23 @@ const CoreDamInfo = () => {
     { label: "Year of Construction", name: "constructionYear" },
     { label: "Operator/Authority", name: "operator" },
     { label: "Max Storage Capacity (MCM)", name: "maxStorage" },
-    { label: "Live Storage Capacity", name: "liveStorage" },
-    { label: "Dead Storage", name: "deadStorage" },
-    { label: "Catchment Area", name: "catchmentArea" },
-    { label: "Surface Area", name: "surfaceArea" },
-    { label: "Height", name: "height" },
-    { label: "Length", name: "length" },
+    { label: "Live Storage Capacity (MCM)", name: "liveStorage" },
+    { label: "Dead Storage (MCM)", name: "deadStorage" },
+    { label: "Catchment Area (km²)", name: "catchmentArea" },
+    { label: "Surface Area (km²)", name: "surfaceArea" },
+    { label: "Height (m)", name: "height" },
+    { label: "Length (m)", name: "length" },
     { label: "Upstream Dam", name: "upstreamDam" },
     { label: "Upstream Dam Distance (km)", name: "upstreamDamDistance" },
     { label: "Downstream Dam", name: "downstreamDam" },
     { label: "Downstream Dam Distance (km)", name: "downstreamDamDistance" },
+    // Basin Coordination Fields
+    { label: "Basin Name", name: "basinName", section: "Basin Coordination" },
+    { label: "Basin Priority Index (1-10)", name: "basinPriorityIndex", section: "Basin Coordination" },
+    { label: "Coordinated Release Plan", name: "coordinatedReleasePlan", type: "textarea", section: "Basin Coordination" },
+    { label: "Upstream Release Schedule", name: "upstreamReleaseSchedule", type: "textarea", section: "Basin Coordination" },
+    { label: "Downstream Absorption Capacity (m³/s)", name: "downstreamAbsorptionCapacity", section: "Basin Coordination" },
+    { label: "Basin Coordination Status", name: "basinCoordinationStatus", type: "select", options: ["Active", "Inactive", "Pending", "Under Review"], section: "Basin Coordination" },
   ];
 
   return (
@@ -114,23 +128,51 @@ const CoreDamInfo = () => {
       <form onSubmit={handleSubmit}>
         <table>
           <tbody>
-            {fields.map((field) => (
-              <tr key={field.name}>
-                <td><strong>{field.label}</strong></td>
-                <td>
-                  <input
-                    name={field.name}
-                    value={formData[field.name] || ""}
-                    onChange={handleChange}
-                    required={
-                      field.name === "lat" ||
-                      field.name === "lng" ||
-                      field.name === "state" ||
-                      field.name === "name"
-                    }
-                  />
-                </td>
-              </tr>
+            {fields.map((field, index) => (
+              <React.Fragment key={field.name}>
+                {field.section && (index === 0 || fields[index - 1].section !== field.section) && (
+                  <tr className="section-header">
+                    <td colSpan="2"><h3>{field.section}</h3></td>
+                  </tr>
+                )}
+                <tr>
+                  <td><strong>{field.label}</strong></td>
+                  <td>
+                    {field.type === "textarea" ? (
+                      <textarea
+                        name={field.name}
+                        value={formData[field.name] || ""}
+                        onChange={handleChange}
+                        rows="3"
+                      />
+                    ) : field.type === "select" ? (
+                      <select
+                        name={field.name}
+                        value={formData[field.name] || ""}
+                        onChange={handleChange}
+                      >
+                        <option value="">Select...</option>
+                        {field.options.map(opt => (
+                          <option key={opt} value={opt}>{opt}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        name={field.name}
+                        value={formData[field.name] || ""}
+                        onChange={handleChange}
+                        type={field.name.includes("Index") || field.name.includes("Capacity") || field.name.includes("Distance") ? "number" : "text"}
+                        required={
+                          field.name === "lat" ||
+                          field.name === "lng" ||
+                          field.name === "state" ||
+                          field.name === "name"
+                        }
+                      />
+                    )}
+                  </td>
+                </tr>
+              </React.Fragment>
             ))}
           </tbody>
         </table>

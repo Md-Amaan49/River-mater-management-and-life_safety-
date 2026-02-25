@@ -27,6 +27,16 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import WaterFlowPage from "./pages/WaterFlowPage";
 import AdminDataForms from "./components/AdminDataForms";
+// New Pages
+import ReservoirGeometry from "./pages/ReservoirGeometry";
+import StorageCapacity from "./pages/StorageCapacity";
+import ForecastMeteo from "./pages/ForecastMeteo";
+import PredictiveSimulation from "./pages/PredictiveSimulation";
+import HistoricalRisk from "./pages/HistoricalRisk";
+import StructuralHealth from "./pages/StructuralHealth";
+import GateSpillway from "./pages/GateSpillway";
+import DownstreamRisk from "./pages/DownstreamRisk";
+import BasinAggregated from "./pages/BasinAggregated";
 
 
 function App() {
@@ -75,6 +85,17 @@ function App() {
         <Route path="/sensors/:damId" element={<Layout><SensorManagement /></Layout>} />
         <Route path="/supporting-info/:damId" element={<Layout><SupportingInfo /></Layout>} />
         <Route path="/features/:damId" element={<Features />} />
+        
+        {/* New Dam Data Routes */}
+        <Route path="/reservoir-geometry/:damId" element={<Layout><ReservoirGeometry /></Layout>} />
+        <Route path="/storage-capacity/:damId" element={<Layout><StorageCapacity /></Layout>} />
+        <Route path="/forecast-meteo/:damId" element={<Layout><ForecastMeteo /></Layout>} />
+        <Route path="/predictive-simulation/:damId" element={<Layout><PredictiveSimulation /></Layout>} />
+        <Route path="/historical-risk/:damId" element={<Layout><HistoricalRisk /></Layout>} />
+        <Route path="/structural-health/:damId" element={<Layout><StructuralHealth /></Layout>} />
+        <Route path="/gate-spillway/:damId" element={<Layout><GateSpillway /></Layout>} />
+        <Route path="/downstream-risk/:damId" element={<Layout><DownstreamRisk /></Layout>} />
+        <Route path="/basin-aggregated/:damId" element={<Layout><BasinAggregated /></Layout>} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={

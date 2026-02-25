@@ -33,6 +33,10 @@ const damStatusSchema = new mongoose.Schema({
 
   gateStatus: [gateSchema], // array to handle multiple gates
 
+  // Environmental and Safety Limits
+  downstreamSafeDischargeLimit: { type: Number }, // m3/s - maximum safe discharge to downstream
+  minimumEnvironmentalFlowRequirement: { type: Number }, // m3/s - minimum flow for ecosystem health
+
   // telemetry & meta
   source: { type: String, enum: ["sensor", "manual"], default: "manual" },
   sensorId: { type: String },

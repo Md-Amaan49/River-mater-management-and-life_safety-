@@ -28,6 +28,8 @@ export default function RealtimeDamStatus() {
     outflowToDownstreamDam: "",
     upstreamRiverVelocity: "",
     downstreamRiverVelocity: "",
+    downstreamSafeDischargeLimit: "",
+    minimumEnvironmentalFlowRequirement: "",
     source: "manual",
     gateStatus: [{ gateNumber: 1, status: "closed", percentageOpen: 0 }],
   });
@@ -327,6 +329,45 @@ export default function RealtimeDamStatus() {
             placeholder="e.g., 3.2"
             className="border rounded p-2"
           />
+        </label>
+
+        {/* Environmental and Safety Limits Section */}
+        <div className="col-span-full mt-4 pt-4 border-t-2 border-blue-200">
+          <h3 className="text-lg font-semibold text-blue-600 mb-3">Environmental & Safety Limits</h3>
+        </div>
+
+        <label className="flex flex-col">
+          <span className="font-medium">Downstream Safe Discharge Limit (m³/s)</span>
+          <input
+            value={form.downstreamSafeDischargeLimit || ""}
+            onChange={(e) =>
+              onChange("downstreamSafeDischargeLimit", e.target.value ? Number(e.target.value) : "")
+            }
+            type="number"
+            step="0.01"
+            placeholder="e.g., 500.0"
+            className="border rounded p-2"
+          />
+          <span className="text-xs text-gray-500 mt-1">
+            Maximum safe discharge rate to prevent downstream flooding
+          </span>
+        </label>
+
+        <label className="flex flex-col">
+          <span className="font-medium">Minimum Environmental Flow Requirement (m³/s)</span>
+          <input
+            value={form.minimumEnvironmentalFlowRequirement || ""}
+            onChange={(e) =>
+              onChange("minimumEnvironmentalFlowRequirement", e.target.value ? Number(e.target.value) : "")
+            }
+            type="number"
+            step="0.01"
+            placeholder="e.g., 25.0"
+            className="border rounded p-2"
+          />
+          <span className="text-xs text-gray-500 mt-1">
+            Minimum flow required to maintain ecosystem health
+          </span>
         </label>
 
         <label className="flex flex-col">
