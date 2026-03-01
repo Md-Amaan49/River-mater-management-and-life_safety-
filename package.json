@@ -8,7 +8,9 @@
     "build": " npm install && npm install --prefix frontend && npm run build --prefix frontend",
     "start": "node backend/server.js",
     "populate-advanced": "node backend/scripts/populateAdvancedDamData.js",
-    "verify-advanced": "node backend/scripts/verifyAdvancedData.js"
+    "verify-advanced": "node backend/scripts/verifyAdvancedData.js",
+    "populate-safety-alerts": "node backend/scripts/populateSafetyAlerts.js",
+    "verify-safety-alerts": "node backend/scripts/verifySafetyAlerts.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

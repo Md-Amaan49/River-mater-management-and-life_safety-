@@ -19,6 +19,7 @@ import sidebarRoutes from "./routes/sidebarRoutes.js";
 import adminDataRoutes from "./routes/adminDataRoutes.js";
 import alertRoutes from "./routes/alertRoutes.js";
 import advancedDataRoutes from "./routes/advancedDataRoutes.js";
+import safetyAlertRoutes from "./routes/safetyAlertRoutes.js";
 
 dotenv.config();
 
@@ -52,6 +53,7 @@ app.use("/api/sidebar", sidebarRoutes);
 app.use("/api/alerts", alertRoutes);
 app.use("/api", adminDataRoutes);
 app.use("/api/dam", advancedDataRoutes);
+app.use("/api/safety-alert", safetyAlertRoutes);
 
 // Serve frontend
 app.use(express.static(path.join(__dirname, "../frontend/dist")));

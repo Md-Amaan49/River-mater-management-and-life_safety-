@@ -85,7 +85,7 @@ const AddDataForm = () => {
     { id: 4, icon: "🛰️", title: "Sensor & Telemetry Integration", route: "/sensors" },
     { id: 5, icon: "📁", title: "Supporting Information", route: "/supporting-info" },
     { id: 6, icon: "🔧", title: "Optional Advanced Features", route: "/features" },
-    { id: 7, icon: "🚨", title: "Safety & Alert System", route: "/safety" },
+    { id: 7, icon: "🚨", title: "Safety & Alert System", route: "/safety-alert" },
     { id: 8, icon: "📋", title: "Admin Data Management", route: "/admin-data" },
     { id: 9, icon: "📐", title: "Reservoir Geometry & Physical Characteristics", route: "/reservoir-geometry" },
     { id: 10, icon: "💧", title: "Storage & Capacity Parameters", route: "/storage-capacity" },

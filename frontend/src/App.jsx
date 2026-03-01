@@ -37,6 +37,7 @@ import StructuralHealth from "./pages/StructuralHealth";
 import GateSpillway from "./pages/GateSpillway";
 import DownstreamRisk from "./pages/DownstreamRisk";
 import BasinAggregated from "./pages/BasinAggregated";
+import SafetyAlertPage from "./pages/SafetyAlertPage";
 
 
 function App() {
@@ -82,6 +83,7 @@ function App() {
         <Route path="/realtime/:damId" element={<Layout><RealtimeDamStatus /></Layout>} />
         <Route path="/water-usage/:damId" element={<Layout><WaterUsage /></Layout>} />
         <Route path="/safety/:damId" element={<Layout><Safety /></Layout>} />
+        <Route path="/safety-alert/:damId" element={<Layout><SafetyAlertPage /></Layout>} />
         <Route path="/sensors/:damId" element={<Layout><SensorManagement /></Layout>} />
         <Route path="/supporting-info/:damId" element={<Layout><SupportingInfo /></Layout>} />
         <Route path="/features/:damId" element={<Features />} />
