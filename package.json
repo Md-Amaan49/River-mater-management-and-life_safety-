@@ -10,7 +10,9 @@
     "populate-advanced": "node backend/scripts/populateAdvancedDamData.js",
     "verify-advanced": "node backend/scripts/verifyAdvancedData.js",
     "populate-safety-alerts": "node backend/scripts/populateSafetyAlerts.js",
-    "verify-safety-alerts": "node backend/scripts/verifySafetyAlerts.js"
+    "verify-safety-alerts": "node backend/scripts/verifySafetyAlerts.js",
+    "test-sidebar-alerts": "node backend/scripts/testSidebarAlerts.js",
+    "test-sidebar-alerts-detailed": "node backend/scripts/testSidebarAlertsDetailed.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

@@ -1,12 +1,14 @@
 import User from "../models/User.js";
 import Dam from "../models/Dam.js";
 import Safety from "../models/Safety.js";
+import SafetyAlert from "../models/SafetyAlert.js";
+import DamStatus from "../models/DamStatus.js";
 import DamHistory from "../models/DamHistory.js";
 import PublicSpot from "../models/PublicSpot.js";
 import RestrictedArea from "../models/RestrictedArea.js";
 import Guideline from "../models/Guideline.js";
 
-// ======================= ALERTS (SAFETY) =======================
+// ======================= ALERTS (SAFETY ALERT SYSTEM) =======================
 export const getAlertsForSavedDams = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).populate("savedDams");
@@ -14,31 +16,119 @@ export const getAlertsForSavedDams = async (req, res) => {
 
     const savedDamIds = user.savedDams.map(dam => dam._id);
     
-    const alerts = await Safety.find({ dam: { $in: savedDamIds } })
-      .populate("dam", "name state river")
-      .sort({ updatedAt: -1 });
+    // Fetch safety alerts for saved dams
+    const safetyAlerts = await SafetyAlert.find({ damId: { $in: savedDamIds } })
+      .populate("damId", "name state river")
+      .sort({ floodRiskScore: -1, updatedAt: -1 });
 
-    // Filter for high-priority alerts
-    const criticalAlerts = alerts.filter(alert => 
-      alert.floodRiskLevel === "Red" || 
-      alert.floodRiskLevel === "Yellow"
+    // Fetch latest DamStatus for each saved dam to get real-time water level
+    const damStatusMap = new Map();
+    for (const damId of savedDamIds) {
+      try {
+        const latestStatus = await DamStatus.findOne({ dam: damId });
+        if (latestStatus) {
+          damStatusMap.set(damId.toString(), latestStatus);
+        }
+      } catch (err) {
+        console.log(`Could not fetch status for dam ${damId}`);
+      }
+    }
+
+    // Count high-risk alerts
+    const highRiskAlerts = safetyAlerts.filter(alert => 
+      alert.floodRiskScore >= 50 || 
+      alert.emergencyLevel === "Critical" || 
+      alert.emergencyLevel === "Disaster" ||
+      alert.alertLevel === "Evacuate Immediately" ||
+      alert.alertLevel === "Move To Safer Area"
     );
 
-    res.json({
-      total: alerts.length,
-      critical: criticalAlerts.length,
-      alerts: alerts.map(alert => ({
+    // Format alerts for frontend with data from both sources
+    const formattedAlerts = safetyAlerts.map(alert => {
+      const damStatus = damStatusMap.get(alert.damId._id.toString());
+      
+      // Debug logging
+      console.log(`\n=== Processing Alert for Dam: ${alert.damId.name} ===`);
+      console.log('SafetyAlert data:', {
+        emergencyLevel: alert.emergencyLevel,
+        floodRiskScore: alert.floodRiskScore,
+        predictedFloodTime: alert.predictedFloodTime,
+        evacuationLeadTime: alert.evacuationLeadTime,
+        currentWaterLevel: alert.currentWaterLevel
+      });
+      console.log('DamStatus data:', damStatus ? {
+        currentWaterLevel: damStatus.currentWaterLevel,
+        levelUnit: damStatus.levelUnit
+      } : 'NOT FOUND');
+      
+      // Use real-time water level from DamStatus if available, otherwise use SafetyAlert data
+      const currentWaterLevel = damStatus?.currentWaterLevel ?? alert.currentWaterLevel ?? 0;
+      const levelUnit = damStatus?.levelUnit ?? "m";
+      
+      return {
         _id: alert._id,
-        dam: alert.dam,
-        floodRiskLevel: alert.floodRiskLevel,
-        seepageReport: alert.seepageReport,
-        structuralHealth: alert.structuralHealth,
-        earthquakeZone: alert.earthquakeZone,
-        emergencyContact: alert.emergencyContact,
-        lastInspection: alert.maintenance?.lastInspection,
-        nextInspection: alert.maintenance?.nextInspection,
+        dam: {
+          _id: alert.damId._id,
+          name: alert.damId.name,
+          state: alert.damId.state,
+          river: alert.damId.river
+        },
+        
+        // From Safety Alert System (exactly as shown in Safety & Alert System page)
+        emergencyLevel: alert.emergencyLevel || "Normal",
+        floodRiskScore: alert.floodRiskScore ?? 0,
+        predictedFloodTime: alert.predictedFloodTime || "Not predicted",
+        evacuationLeadTime: alert.evacuationLeadTime ?? 0,
+        alertLevel: alert.alertLevel || "Safe",
+        
+        // From Real-time Water Level & Flow (DamStatus)
+        currentWaterLevel: currentWaterLevel,
+        levelUnit: levelUnit,
+        
+        // Additional useful information
+        timeToFullCapacity: alert.timeToFullCapacity ?? 0,
+        estimatedTimeOfFlood: alert.estimatedTimeOfFlood || "",
+        downstreamFloodArrivalTime: alert.downstreamFloodArrivalTime ?? 0,
+        
+        // Water level predictions
+        predictedWaterLevel_1hr: alert.predictedWaterLevel_1hr ?? 0,
+        predictedWaterLevel_6hr: alert.predictedWaterLevel_6hr ?? 0,
+        waterLevelIncrease: (alert.predictedWaterLevel_6hr ?? 0) - currentWaterLevel,
+        
+        // Flow information
+        inflowRate: damStatus?.inflowRate ?? alert.inflowRate ?? 0,
+        outflowRate: damStatus?.outflowRate ?? alert.outflowRate ?? 0,
+        netInflowRate: alert.netInflowRate ?? 0,
+        
+        // Affected areas
+        affectedDistricts: alert.affectedDistricts || "",
+        affectedVillagesList: alert.affectedVillagesList || "",
+        expectedAffectedPopulation: alert.expectedAffectedPopulation ?? 0,
+        
+        // Safety information
+        safetyInstructions: alert.safetyInstructions || "",
+        safeZones: alert.safeZones || "",
+        evacuationRoutes: alert.evacuationRoutes || "",
+        
+        // Weather
+        forecastRainfall: alert.forecastRainfall ?? 0,
+        
+        // Structural
+        structuralHealthScore: alert.structuralHealthScore ?? 100,
+        
         updatedAt: alert.updatedAt,
-      }))
+      };
+    });
+    
+    console.log(`\n=== Final Response ===`);
+    console.log(`Total alerts: ${formattedAlerts.length}`);
+    console.log(`High risk alerts: ${highRiskAlerts.length}`);
+
+    res.json({
+      total: safetyAlerts.length,
+      highRisk: highRiskAlerts.length,
+      hasHighRisk: highRiskAlerts.length > 0,
+      alerts: formattedAlerts
     });
   } catch (err) {
     console.error("Error fetching alerts for saved dams:", err);

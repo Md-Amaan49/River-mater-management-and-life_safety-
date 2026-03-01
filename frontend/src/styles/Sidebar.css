@@ -8,11 +8,11 @@
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 5;
 }
 
 .sidebar.collapsed {
   width: 60px;
-
 }
 
 .toggle-btn {
@@ -29,7 +29,6 @@
   display: flex;
   flex-direction: column;
   margin-top: 1px;
- 
 }
 
 .sidebar-link {
@@ -42,6 +41,12 @@
   font-weight: 500;
   font-size: 15px;
   transition: background 0.2s, color 0.3s;
+  position: relative;
+  border: none;
+  background: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
 }
 
 .sidebar-link:hover {
@@ -49,9 +54,45 @@
   color: #90e0ef;
 }
 
+.icon-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
 .icon {
   font-size: 22px;
   padding-left: 5px;
   padding-right: 5px;
   padding-top: 10px;
+}
+
+/* Notification Badge */
+.notification-badge {
+  position: absolute;
+  top: 5px;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background: #ff3333;
+  border-radius: 50%;
+  border: 2px solid #0d1b2a;
+  box-shadow: 0 0 10px rgba(255, 51, 51, 0.8);
+}
+
+/* Blinking Animation */
+.notification-badge.blink {
+  animation: blink-animation 1.5s infinite;
+}
+
+@keyframes blink-animation {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(255, 51, 51, 0.8);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255, 51, 51, 1);
+  }
 }

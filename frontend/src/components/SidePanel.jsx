@@ -3,8 +3,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/SidePanel.css";
+import API_BASE_URL from "../config.js";
 
-const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api";
+const API_BASE = `${API_BASE_URL}/api`;
 
 export default function SidePanel({ type, onClose }) {
   const navigate = useNavigate();
@@ -55,6 +56,10 @@ export default function SidePanel({ type, onClose }) {
 
         const res = await axios.get(endpoint, { headers: authHeader });
         if (mounted) {
+          console.log(`SidePanel ${type} data received:`, res.data);
+          if (type === "Alerts" && res.data.alerts) {
+            console.log(`First alert sample:`, res.data.alerts[0]);
+          }
           setData(res.data);
         }
       } catch (err) {
@@ -105,52 +110,135 @@ export default function SidePanel({ type, onClose }) {
       return <div className="empty">No alerts for your saved dams.</div>;
     }
 
+    const getEmergencyColor = (level) => {
+      switch(level) {
+        case "Disaster": return "#d50000";
+        case "Critical": return "#ff6d00";
+        case "Warning": return "#ffab00";
+        case "Watch": return "#64dd17";
+        case "Normal": return "#00c853";
+        default: return "#9E9E9E";
+      }
+    };
+
+    const formatTime = (hours) => {
+      if (!hours || hours === 0 || hours === 999) return "N/A";
+      if (hours < 1) return `${Math.round(hours * 60)} minutes`;
+      if (hours < 24) return `${hours.toFixed(1)} hours`;
+      return `${(hours / 24).toFixed(1)} days`;
+    };
+
+    const safeToFixed = (value, decimals = 2) => {
+      if (value === undefined || value === null || isNaN(value)) return "N/A";
+      return Number(value).toFixed(decimals);
+    };
+
     return (
-      <div className="alerts-section">
+      <div className="alerts-section safety-alerts">
         <div className="stats-bar">
           <div className="stat">
-            <span className="stat-number">{data.total}</span>
+            <span className="stat-number">{data.total || 0}</span>
             <span className="stat-label">Total Alerts</span>
           </div>
           <div className="stat critical">
-            <span className="stat-number">{data.critical}</span>
-            <span className="stat-label">Critical</span>
+            <span className="stat-number">{data.highRisk || 0}</span>
+            <span className="stat-label">High Risk</span>
           </div>
         </div>
         
         <div className="alerts-list">
           {data.alerts.map((alert) => (
-            <div key={alert._id} className={`alert-item ${alert.floodRiskLevel?.toLowerCase()}`}>
-              <div className="alert-header">
-                <h4>{alert.dam.name}</h4>
-                <span className={`risk-badge ${alert.floodRiskLevel?.toLowerCase()}`}>
-                  {alert.floodRiskLevel || "Unknown"}
-                </span>
+            <div key={alert._id} className="safety-alert-item-simple">
+              {/* Dam Name Header */}
+              <div className="alert-header-simple">
+                <h4 className="dam-name">{alert.dam?.name || "Unknown Dam"}</h4>
+                <div className="location-info">
+                  📍 {alert.dam?.state || "N/A"} • 🌊 {alert.dam?.river || "N/A"}
+                </div>
               </div>
-              <div className="alert-details">
-                <p><strong>Location:</strong> {alert.dam.state} • {alert.dam.river}</p>
-                {alert.seepageReport && (
-                  <p><strong>Seepage:</strong> {alert.seepageReport}</p>
-                )}
-                {alert.earthquakeZone && (
-                  <p><strong>Earthquake Zone:</strong> {alert.earthquakeZone}</p>
-                )}
-                {alert.lastInspection && (
-                  <p><strong>Last Inspection:</strong> {new Date(alert.lastInspection).toLocaleDateString()}</p>
-                )}
-                {alert.emergencyContact?.phone && (
-                  <p><strong>Emergency:</strong> {alert.emergencyContact.phone}</p>
-                )}
+
+              {/* 5 REQUIRED FIELDS */}
+              <div className="five-fields-grid">
+                
+                {/* 1. Emergency Level */}
+                <div className="field-card" style={{borderLeftColor: getEmergencyColor(alert?.emergencyLevel)}}>
+                  <div className="field-label">Emergency Level</div>
+                  <div className="field-value" style={{color: getEmergencyColor(alert?.emergencyLevel)}}>
+                    {alert?.emergencyLevel || "Normal"}
+                  </div>
+                </div>
+
+                {/* 2. Flood Risk Score */}
+                <div className="field-card" style={{borderLeftColor: (alert?.floodRiskScore ?? 0) >= 70 ? '#ff1744' : (alert?.floodRiskScore ?? 0) >= 50 ? '#ff9800' : '#ffd600'}}>
+                  <div className="field-label">Flood Risk Score</div>
+                  <div className="field-value">
+                    {safeToFixed(alert?.floodRiskScore, 0)}/100
+                  </div>
+                </div>
+
+                {/* 3. Predicted Flood Time */}
+                <div className="field-card" style={{borderLeftColor: '#2196f3'}}>
+                  <div className="field-label">Predicted Flood Time</div>
+                  <div className="field-value">
+                    {alert?.predictedFloodTime || "Not predicted"}
+                  </div>
+                </div>
+
+                {/* 4. Evacuation Lead Time */}
+                <div className="field-card" style={{borderLeftColor: '#ff5722'}}>
+                  <div className="field-label">Evacuation Lead Time</div>
+                  <div className="field-value">
+                    {formatTime(alert?.evacuationLeadTime)}
+                  </div>
+                </div>
+
+                {/* 5. Current Water Level */}
+                <div className="field-card" style={{borderLeftColor: '#00bcd4'}}>
+                  <div className="field-label">Current Water Level</div>
+                  <div className="field-value">
+                    {safeToFixed(alert?.currentWaterLevel)} {alert?.levelUnit || "m"}
+                  </div>
+                </div>
+
               </div>
-              <button 
-                className="view-dam-btn"
-                onClick={() => {
-                  navigate(`/dam-dashboard/${alert.dam._id}`);
-                  onClose();
-                }}
-              >
-                View Dam
-              </button>
+
+              {/* Additional Info (Collapsible/Optional) */}
+              {(alert.affectedDistricts || alert.safetyInstructions) && (
+                <div className="additional-info">
+                  {alert.affectedDistricts && (
+                    <div className="info-row">
+                      <strong>🏘️ Affected Areas:</strong> {alert.affectedDistricts}
+                    </div>
+                  )}
+                  {alert.safetyInstructions && (
+                    <div className="info-row">
+                      <strong>⚠️ Instructions:</strong> {alert.safetyInstructions}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="alert-footer">
+                <button 
+                  className="view-dam-btn"
+                  onClick={() => {
+                    navigate(`/dam-dashboard/${alert.dam._id}`);
+                    onClose();
+                  }}
+                >
+                  View Dam
+                </button>
+                <button 
+                  className="safety-alert-btn"
+                  onClick={() => {
+                    navigate(`/safety-alert/${alert.dam._id}`);
+                    onClose();
+                  }}
+                >
+                  Full Report
+                </button>
+              </div>
             </div>
           ))}
         </div>

@@ -407,3 +407,555 @@
   font-size: 0.8rem;
   color: rgba(255,255,255,0.8);
 }
+
+
+/* ===== SIMPLIFIED 5-FIELD ALERT DISPLAY ===== */
+.safety-alert-item-simple {
+  background: linear-gradient(135deg, rgba(20, 30, 48, 0.9), rgba(15, 23, 42, 0.95));
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-left: 4px solid rgba(59, 130, 246, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.safety-alert-item-simple:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.alert-header-simple {
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.alert-header-simple .dam-name {
+  margin: 0 0 6px 0;
+  font-size: 1.1rem;
+  color: #e6eef8;
+  font-weight: 700;
+}
+
+.alert-header-simple .location-info {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Five Fields Grid Layout */
+.five-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.field-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 3px solid;
+  border-radius: 6px;
+  padding: 10px;
+  transition: all 0.2s ease;
+}
+
+.field-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.field-card .field-label {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.field-card .field-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #e6eef8;
+  line-height: 1.2;
+}
+
+/* Additional Info Section */
+.additional-info {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.additional-info .info-row {
+  margin: 4px 0;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.4;
+}
+
+.additional-info .info-row strong {
+  color: #e6eef8;
+  margin-right: 6px;
+}
+
+/* ===== SAFETY ALERT SYSTEM STYLING ===== */
+.safety-alerts .safety-alert-item {
+  background: linear-gradient(135deg, rgba(20, 30, 48, 0.9), rgba(15, 23, 42, 0.95));
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-left: 4px solid transparent;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.safety-alert-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Alert Level Colors */
+.safety-alert-item.evacuate {
+  border-left-color: #ff1744;
+  background: linear-gradient(135deg, rgba(255, 23, 68, 0.15), rgba(15, 23, 42, 0.95));
+}
+
+.safety-alert-item.move-safer {
+  border-left-color: #ff9800;
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.12), rgba(15, 23, 42, 0.95));
+}
+
+.safety-alert-item.be-alert {
+  border-left-color: #ffd600;
+  background: linear-gradient(135deg, rgba(255, 214, 0, 0.1), rgba(15, 23, 42, 0.95));
+}
+
+.safety-alert-item.safe {
+  border-left-color: #00e676;
+  background: linear-gradient(135deg, rgba(0, 230, 118, 0.08), rgba(15, 23, 42, 0.95));
+}
+
+/* Emergency Level Styling */
+.safety-alert-item.disaster {
+  animation: pulse-disaster 2s infinite;
+}
+
+.safety-alert-item.critical {
+  animation: pulse-critical 2.5s infinite;
+}
+
+@keyframes pulse-disaster {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(255, 23, 68, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(255, 23, 68, 0.8);
+  }
+}
+
+@keyframes pulse-critical {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 18px rgba(255, 152, 0, 0.6);
+  }
+}
+
+/* Alert Header */
+.safety-alert-item .alert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.safety-alert-item .alert-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #e6eef8;
+  font-weight: 700;
+}
+
+.alert-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.alert-level-badge, .emergency-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* Alert Level Badge Colors */
+.alert-level-badge.evacuate {
+  background: #ff1744;
+  color: white;
+  box-shadow: 0 0 10px rgba(255, 23, 68, 0.5);
+}
+
+.alert-level-badge.move-safer {
+  background: #ff9800;
+  color: white;
+  box-shadow: 0 0 8px rgba(255, 152, 0, 0.4);
+}
+
+.alert-level-badge.be-alert {
+  background: #ffd600;
+  color: #1a1a1a;
+  box-shadow: 0 0 8px rgba(255, 214, 0, 0.4);
+}
+
+.alert-level-badge.safe {
+  background: #00e676;
+  color: #1a1a1a;
+}
+
+/* Emergency Badge Colors */
+.emergency-badge.disaster {
+  background: #d50000;
+  color: white;
+}
+
+.emergency-badge.critical {
+  background: #ff6d00;
+  color: white;
+}
+
+.emergency-badge.warning {
+  background: #ffab00;
+  color: #1a1a1a;
+}
+
+.emergency-badge.watch {
+  background: #64dd17;
+  color: #1a1a1a;
+}
+
+.emergency-badge.normal {
+  background: #00c853;
+  color: white;
+}
+
+/* Alert Location */
+.alert-location {
+  margin-bottom: 12px;
+}
+
+.alert-location p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Critical Info Section */
+.critical-info {
+  background: rgba(255, 23, 68, 0.08);
+  border: 1px solid rgba(255, 23, 68, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.risk-score {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+}
+
+.risk-score .score {
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.risk-score .score.high {
+  background: #ff1744;
+  color: white;
+}
+
+.risk-score .score.medium {
+  background: #ff9800;
+  color: white;
+}
+
+.risk-score .score.low {
+  background: #ffd600;
+  color: #1a1a1a;
+}
+
+.time-critical, .evacuation-time {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: #ffcdd2;
+}
+
+/* Water Info Section */
+.water-info {
+  background: rgba(33, 150, 243, 0.08);
+  border: 1px solid rgba(33, 150, 243, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+.info-row {
+  margin: 4px 0;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-row strong {
+  color: #e6eef8;
+  margin-right: 8px;
+}
+
+.info-row.prediction {
+  color: #90caf9;
+}
+
+.info-row .increase {
+  color: #ff6b6b;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+/* Affected Areas Section */
+.affected-areas {
+  background: rgba(255, 152, 0, 0.08);
+  border: 1px solid rgba(255, 152, 0, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+/* Safety Instructions */
+.safety-instructions {
+  background: rgba(255, 23, 68, 0.1);
+  border-left: 3px solid #ff1744;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+.safety-instructions strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #ff6b6b;
+  font-size: 0.85rem;
+}
+
+.safety-instructions p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.4;
+}
+
+/* Evacuation Info */
+.evacuation-info {
+  background: rgba(76, 175, 80, 0.08);
+  border: 1px solid rgba(76, 175, 80, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+/* Weather Info */
+.weather-info {
+  background: rgba(156, 39, 176, 0.08);
+  border: 1px solid rgba(156, 39, 176, 0.2);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Alert Footer */
+.alert-footer {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.safety-alert-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 152, 0, 0.5);
+  background: rgba(255, 152, 0, 0.15);
+  color: #ffb74d;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.safety-alert-btn:hover {
+  background: rgba(255, 152, 0, 0.25);
+  border-color: #ff9800;
+  color: #ffa726;
+  transform: translateY(-1px);
+}
+
+.alert-footer .view-dam-btn {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 0.75rem;
+}
+
+
+/* ===== COMPACT ALERT LAYOUT ===== */
+.alert-title-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alert-icon {
+  font-size: 1.3rem;
+}
+
+.alert-meta {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.location-tag, .river-tag {
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Info Cards Grid */
+.alert-key-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.info-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 8px;
+  transition: all 0.2s ease;
+}
+
+.info-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.info-card .info-label {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-card .info-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #e6eef8;
+}
+
+/* Special Card Styling */
+.warning-card {
+  border-left: 3px solid #ff9800;
+}
+
+.risk-card .info-value.risk-high {
+  color: #ff1744;
+}
+
+.risk-card .info-value.risk-medium {
+  color: #ff9800;
+}
+
+.risk-card .info-value.risk-low {
+  color: #ffd600;
+}
+
+.time-card {
+  border-left: 3px solid #2196f3;
+}
+
+.evacuation-card {
+  border-left: 3px solid #ff5722;
+}
+
+.water-card {
+  border-left: 3px solid #00bcd4;
+}
+
+.increase-card {
+  border-left: 3px solid #ff6b6b;
+}
+
+.capacity-card {
+  border-left: 3px solid #ff1744;
+}
+
+.capacity-card .critical-time {
+  color: #ff6b6b;
+  font-weight: 700;
+}
+
+/* Sections */
+.affected-section, .safety-section, .evacuation-section {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #e6eef8;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.affected-item, .evac-item {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 4px 0;
+  line-height: 1.4;
+}
+
+.safety-text {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.5;
+  margin: 0;
+}
