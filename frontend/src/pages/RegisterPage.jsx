@@ -8,6 +8,7 @@ import {
   cleanMobileNumber 
 } from "../utils/ValidationUtils";
 import PasswordStrengthIndicator from "../components/PasswordStrengthIndicator";
+import API_BASE_URL from "../config";
 import "../styles/Register.css";
 
 const Register = () => {
@@ -23,6 +24,8 @@ const Register = () => {
     place: "",
     state: "",
     role: "user", // default
+    damId: "", // for dam operator
+    damName: "", // for dam operator (optional)
   });
   
   // Validation and UI state
@@ -143,7 +146,7 @@ const Register = () => {
       
       if (image) formData.append("profileImage", image);
 
-      const res = await axios.post("https://river-water-management-and-life-safety.onrender.com/api/users/register", formData, {
+      const res = await axios.post(`${API_BASE_URL}/api/users/register`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -360,8 +363,57 @@ const Register = () => {
             <option value="user">User</option>
             <option value="admin">Admin</option>
             <option value="govt">Government Official</option>
+            <option value="dam_operator">Dam Operator</option>
           </select>
         </div>
+
+        {/* Dam Operator Specific Fields */}
+        {form.role === "dam_operator" && (
+          <>
+            <div className="form-group dam-operator-section">
+              <div className="section-header">
+                <span className="section-icon">🏗️</span>
+                <span className="section-title">Dam Assignment</span>
+              </div>
+              
+              {/* Dam ID Field (Required) */}
+              <div className="form-group">
+                <input
+                  name="damId"
+                  type="text"
+                  placeholder="Dam ID (Required) *"
+                  value={form.damId}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={getFieldClass('damId')}
+                  disabled={isSubmitting}
+                  required
+                />
+                {fieldTouched.damId && validationErrors.damId && (
+                  <div className="error-message">{validationErrors.damId}</div>
+                )}
+                {fieldTouched.damId && !validationErrors.damId && form.damId && (
+                  <div className="success-message">✓ Dam ID entered</div>
+                )}
+                <div className="field-hint">Enter the unique ID of the dam you operate</div>
+              </div>
+
+              {/* Dam Name Field (Optional) */}
+              <div className="form-group">
+                <input
+                  name="damName"
+                  type="text"
+                  placeholder="Dam Name (Optional)"
+                  value={form.damName}
+                  onChange={handleChange}
+                  className="form-field"
+                  disabled={isSubmitting}
+                />
+                <div className="field-hint">Optional: Enter dam name for verification</div>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Profile Image */}
         <div className="form-group">

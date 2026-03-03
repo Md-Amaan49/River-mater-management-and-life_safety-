@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../styles/ProfilePage.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "../config";
 import {
   FaUser,
   FaEdit,
@@ -36,7 +37,7 @@ const ProfilePage = () => {
         return; // not logged in
       }
 
-      const res = await axios.get("https://river-water-management-and-life-safety.onrender.com/api/users/profile", {
+      const res = await axios.get(`${API_BASE_URL}/api/users/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -55,7 +56,7 @@ const ProfilePage = () => {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const res = await axios.get("https://river-water-management-and-life-safety.onrender.com/api/users/stats", {
+      const res = await axios.get(`${API_BASE_URL}/api/users/stats`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -84,6 +85,10 @@ const ProfilePage = () => {
 
   const handleGovtPanel = () => {
     navigate("/govt-dashboard");
+  };
+
+  const handleDamOperatorPanel = () => {
+    navigate("/admin/add-data");
   };
 
   useEffect(() => {
@@ -118,7 +123,7 @@ const ProfilePage = () => {
       {/* Top Profile Info */}
       <div className="profile-header">
           <img 
-            src={`https://river-water-management-and-life-safety.onrender.com${user.profileImage}`} 
+            src={`${API_BASE_URL}${user.profileImage}`} 
             alt="Profile" 
             style={{ width: "100px", height: "100px", borderRadius: "50%" }} 
           />
@@ -129,6 +134,14 @@ const ProfilePage = () => {
           <p>Phone: {user.mobile}</p>
           <p>Location: {user.place}</p>
           <p>State: {user.state}</p>
+          
+          {/* Dam Operator Specific Info */}
+          {user.role === "dam_operator" && user.assignedDam && (
+            <div className="assigned-dam-info">
+              <p><strong>🏗️ Assigned Dam:</strong> {user.assignedDam.name}</p>
+              {user.damVerified && <span className="verified-badge">✓ Verified</span>}
+            </div>
+          )}
         </div>
         <button className="edit-profile-btn" onClick={handleEditProfile}>
           <FaEdit /> Edit Profile
@@ -190,6 +203,14 @@ const ProfilePage = () => {
               onClick={handleGovtPanel}
             >
               <FaBuilding /> Govt Official Panel
+            </div>
+          )}
+          {user.role === "dam_operator" && (
+            <div
+              className="setting-item clickable highlight"
+              onClick={handleDamOperatorPanel}
+            >
+              <FaDatabase /> Dam Operator Panel
             </div>
           )}
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_BASE_URL from "../config";
 import "../styles/AddDataForm.css";
 
 const AddDataForm = () => {
@@ -19,8 +20,34 @@ const AddDataForm = () => {
   const [newDam, setNewDam] = useState("");
 
   const [message, setMessage] = useState("");
+  const [user, setUser] = useState(null);
 
-  const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api/data";
+  const API_BASE = `${API_BASE_URL}/api/data`;
+
+  // Fetch user profile to check role and assigned dam
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const res = await axios.get(`${API_BASE_URL}/api/users/profile`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setUser(res.data);
+
+        // If dam operator, auto-select their assigned dam
+        if (res.data.role === "dam_operator" && res.data.assignedDam) {
+          setSelectedDam(res.data.assignedDam._id);
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   useEffect(() => {
     axios.get(`${API_BASE}/states`).then((res) => setStates(res.data));
@@ -30,17 +57,23 @@ const AddDataForm = () => {
     if (selectedState) {
       axios.get(`${API_BASE}/rivers/${selectedState}`).then((res) => setRivers(res.data));
       setSelectedRiver("");
-      setSelectedDam("");
+      // Don't clear selectedDam if user is dam operator
+      if (user?.role !== "dam_operator") {
+        setSelectedDam("");
+      }
       setDams([]);
     }
-  }, [selectedState]);
+  }, [selectedState, user]);
 
   useEffect(() => {
     if (selectedRiver) {
       axios.get(`${API_BASE}/dams/${selectedRiver}`).then((res) => setDams(res.data));
-      setSelectedDam("");
+      // Don't clear selectedDam if user is dam operator
+      if (user?.role !== "dam_operator") {
+        setSelectedDam("");
+      }
     }
-  }, [selectedRiver]);
+  }, [selectedRiver, user]);
 
   const handleAddState = () => {
     if (!newState) return;
@@ -105,20 +138,37 @@ const AddDataForm = () => {
       setMessage("Please select a dam first");
     }
   };
+  
   const handleDamSelect = (value) => {
-  setSelectedDam({ ...value, _id: value._id });
-  navigate(`/core-dam-info/${value._id}`); // 👈 Add this line
-};
+    setSelectedDam(value);
+    // Don't auto-navigate - let user choose which card to click
+  };
 
+  // Check if user is dam operator
+  const isDamOperator = user?.role === "dam_operator";
+  const canModifyData = user?.role === "admin" || user?.role === "govt" || isDamOperator;
 
   return (
     <div className="add-data-form">
       <h2>Add / Manage Dam Data</h2>
 
+      {/* Show info message for dam operators */}
+      {isDamOperator && user?.assignedDam && (
+        <div className="info-message">
+          🏗️ You are assigned to: <strong>{user.assignedDam.name}</strong>
+          <br />
+          You can only view and update data for your assigned dam.
+        </div>
+      )}
+
       <div className="form-row">
         <label>State</label>
         <div className="input-group">
-          <select onChange={(e) => setSelectedState(e.target.value)} value={selectedState}>
+          <select 
+            onChange={(e) => setSelectedState(e.target.value)} 
+            value={selectedState}
+            disabled={isDamOperator}
+          >
             <option value="">-- Select State --</option>
             {states.map((state) => (
               <option key={state._id} value={state._id}>{state.name}</option>
@@ -129,8 +179,14 @@ const AddDataForm = () => {
             placeholder="New state"
             value={newState}
             onChange={(e) => setNewState(e.target.value)}
+            disabled={!canModifyData || isDamOperator}
           />
-          <button onClick={handleAddState}>+</button>
+          <button 
+            onClick={handleAddState}
+            disabled={!canModifyData || isDamOperator}
+          >
+            +
+          </button>
         </div>
       </div>
 
@@ -140,7 +196,7 @@ const AddDataForm = () => {
           <select
             onChange={(e) => setSelectedRiver(e.target.value)}
             value={selectedRiver}
-            disabled={!selectedState}
+            disabled={!selectedState || isDamOperator}
           >
             <option value="">-- Select River --</option>
             {rivers.map((river) => (
@@ -152,9 +208,14 @@ const AddDataForm = () => {
             placeholder="New river"
             value={newRiver}
             onChange={(e) => setNewRiver(e.target.value)}
-            disabled={!selectedState}
+            disabled={!selectedState || !canModifyData || isDamOperator}
           />
-          <button onClick={handleAddRiver} disabled={!selectedState}>+</button>
+          <button 
+            onClick={handleAddRiver} 
+            disabled={!selectedState || !canModifyData || isDamOperator}
+          >
+            +
+          </button>
         </div>
       </div>
 
@@ -162,9 +223,9 @@ const AddDataForm = () => {
         <label>Dam</label>
         <div className="input-group">
           <select
-            onChange={(e) => setSelectedDam(e.target.value)}
+            onChange={(e) => handleDamSelect(e.target.value)}
             value={selectedDam}
-            disabled={!selectedRiver}
+            disabled={!selectedRiver || isDamOperator}
           >
             <option value="">-- Select Dam --</option>
             {dams.map((dam) => (
@@ -176,9 +237,14 @@ const AddDataForm = () => {
             placeholder="New dam"
             value={newDam}
             onChange={(e) => setNewDam(e.target.value)}
-            disabled={!selectedRiver}
+            disabled={!selectedRiver || !canModifyData || isDamOperator}
           />
-          <button onClick={handleAddDam} disabled={!selectedRiver}>+</button>
+          <button 
+            onClick={handleAddDam} 
+            disabled={!selectedRiver || !canModifyData || isDamOperator}
+          >
+            +
+          </button>
         </div>
       </div>
 

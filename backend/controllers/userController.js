@@ -18,7 +18,7 @@ const generateRefreshToken = (user) => {
 // REGISTER
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password, mobile, place, state, role } = req.body;
+    const { name, email, password, mobile, place, state, role, damId, damName } = req.body;
 
     // Enhanced validation
     if (!name || !email || !password || !mobile || !place || !state) {
@@ -74,6 +74,58 @@ export const registerUser = async (req, res) => {
         .json({ success: false, message: "Mobile number already registered" });
     }
 
+    // Dam Operator specific validation
+    let assignedDamId = null;
+    let damVerified = false;
+    
+    if (role === "dam_operator") {
+      if (!damId) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Dam ID is required for Dam Operator role" });
+      }
+
+      // Import Dam model
+      const Dam = (await import("../models/Dam.js")).default;
+      
+      // Verify dam exists
+      const dam = await Dam.findById(damId);
+      
+      if (!dam) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Dam not found with the provided ID" });
+      }
+
+      // Optional: Verify dam name matches if provided
+      if (damName && dam.name.toLowerCase() !== damName.toLowerCase()) {
+        return res
+          .status(400)
+          .json({ 
+            success: false, 
+            message: `Dam name mismatch. Expected: ${dam.name}` 
+          });
+      }
+
+      // Check if another operator is already assigned to this dam
+      const existingOperator = await User.findOne({ 
+        assignedDam: damId, 
+        role: "dam_operator" 
+      });
+      
+      if (existingOperator) {
+        return res
+          .status(400)
+          .json({ 
+            success: false, 
+            message: `This dam already has an assigned operator (${existingOperator.email})` 
+          });
+      }
+
+      assignedDamId = dam._id;
+      damVerified = true;
+    }
+
     const profileImagePath = req.file ? `/uploads/${req.file.filename}` : null;
 
     const newUser = await User.create({
@@ -83,15 +135,27 @@ export const registerUser = async (req, res) => {
       mobile,
       place,
       state,
-      role: role || "user", // default role user
+      role: role || "user", // user, admin, govt, dam_operator
       profileImage: profileImagePath,
+      assignedDam: assignedDamId,
+      damVerified: damVerified,
     });
 
     const token = generateToken(newUser);
 
+    // Populate dam info if dam operator
+    let damInfo = null;
+    if (role === "dam_operator" && assignedDamId) {
+      const Dam = (await import("../models/Dam.js")).default;
+      const dam = await Dam.findById(assignedDamId).select("name state river");
+      damInfo = dam;
+    }
+
     res.status(201).json({
       success: true,
-      message: "Registration successful",
+      message: role === "dam_operator" 
+        ? `Registration successful! You are now assigned to ${damInfo?.name}` 
+        : "Registration successful",
       token,
       user: {
         id: newUser._id,
@@ -102,6 +166,8 @@ export const registerUser = async (req, res) => {
         place: newUser.place,
         state: newUser.state,
         profileImage: newUser.profileImage,
+        assignedDam: damInfo,
+        damVerified: newUser.damVerified,
       },
     });
   } catch (err) {
@@ -188,7 +254,12 @@ export const refreshToken = (req, res) => {
 export const getProfile = async (req, res) => {
   try {
     // req.user is already set in protect middleware
-    const user = await User.findById(req.user._id).select("-password");
+    const user = await User.findById(req.user._id)
+      .select("-password")
+      .populate({
+        path: "assignedDam",
+        select: "name state river"
+      });
 
     if (user) {
       res.json({
@@ -198,8 +269,10 @@ export const getProfile = async (req, res) => {
         mobile: user.mobile,
         place: user.place,
         state: user.state,
-        role: user.role, // admin | govt | user
-        profileImage: user.profileImage || null, // in case image exists
+        role: user.role, // admin | govt | user | dam_operator
+        profileImage: user.profileImage || null,
+        assignedDam: user.assignedDam || null, // populated dam info for dam operators
+        damVerified: user.damVerified || false,
         createdAt: user.createdAt,
       });
     } else {

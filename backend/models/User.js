@@ -8,10 +8,13 @@ const userSchema = new mongoose.Schema({
   mobile: { type: String },
   place: { type: String },
   state: { type: String },
-  role: { type: String, default: "user" },
+  role: { type: String, default: "user" }, // user, admin, govt, dam_operator
   profileImage: { type: String },
-  // ✅ new
+  // ✅ saved dams for regular users
   savedDams: [{ type: mongoose.Schema.Types.ObjectId, ref: "Dam" }],
+  // ✅ dam operator specific fields
+  assignedDam: { type: mongoose.Schema.Types.ObjectId, ref: "Dam" }, // for dam_operator role
+  damVerified: { type: Boolean, default: false }, // whether dam assignment is verified
 }, { timestamps: true });
 
 userSchema.pre("save", async function (next) {

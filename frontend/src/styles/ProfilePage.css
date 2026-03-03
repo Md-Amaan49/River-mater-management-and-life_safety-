@@ -142,3 +142,41 @@
 .logout:hover {
   background-color: #dc2626;
 }
+
+.highlight {
+  background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.highlight:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Dam Operator Specific Styles */
+.assigned-dam-info {
+  margin-top: 0.8rem;
+  padding: 0.8rem;
+  background-color: #0f172a;
+  border-left: 3px solid #38bdf8;
+  border-radius: 0.5rem;
+}
+
+.assigned-dam-info p {
+  margin: 0;
+  font-size: 1rem;
+  color: #f1f5f9;
+}
+
+.verified-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.2rem 0.6rem;
+  background-color: #10b981;
+  color: white;
+  border-radius: 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}

@@ -152,6 +152,18 @@ export const calculatePasswordStrength = (password) => {
 };
 
 /**
+ * Dam ID validation - MongoDB ObjectId format
+ * @param {string} damId - Dam ID to validate
+ * @returns {boolean} - True if damId is valid MongoDB ObjectId
+ */
+export const validateDamId = (damId) => {
+  if (!damId || typeof damId !== 'string') return false;
+  // MongoDB ObjectId is 24 character hex string
+  const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+  return objectIdRegex.test(damId.trim());
+};
+
+/**
  * Get validation error message for a specific field
  * @param {string} fieldName - Name of the field
  * @param {string} value - Value to validate
@@ -195,6 +207,11 @@ export const getValidationError = (fieldName, value, additionalData = {}) => {
       if (!validateRequired(value)) return 'State is required';
       return null;
       
+    case 'damId':
+      if (!validateRequired(value)) return 'Dam ID is required for Dam Operator role';
+      if (!validateDamId(value)) return 'Please enter a valid Dam ID (24 character alphanumeric)';
+      return null;
+      
     default:
       return null;
   }
@@ -208,8 +225,13 @@ export const getValidationError = (fieldName, value, additionalData = {}) => {
 export const validateForm = (formData) => {
   const errors = {};
   
-  // Validate each field
+  // Base fields to validate
   const fieldsToValidate = ['name', 'email', 'password', 'confirmPassword', 'mobile', 'place', 'state'];
+  
+  // Add damId validation if role is dam_operator
+  if (formData.role === 'dam_operator') {
+    fieldsToValidate.push('damId');
+  }
   
   fieldsToValidate.forEach(field => {
     const error = getValidationError(field, formData[field], { password: formData.password });
