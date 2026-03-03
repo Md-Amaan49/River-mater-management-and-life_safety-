@@ -15,7 +15,9 @@ import { useNavigate } from "react-router-dom";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api";
+import API_BASE_URL from "../config";
+
+const API_BASE = `${API_BASE_URL}/api`;
 const DATA_API = `${API_BASE}/data`;
 const USER_API = `${API_BASE}/users`;
 const USAGE_API = `${API_BASE}/water-usage`;

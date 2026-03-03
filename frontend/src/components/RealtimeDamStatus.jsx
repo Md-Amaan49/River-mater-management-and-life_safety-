@@ -3,9 +3,10 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/RealtimeDamStatus.css";
+import API_BASE_URL from "../config";
 
-const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api/data";
-const USER_API = "https://river-water-management-and-life-safety.onrender.com/api/users";
+const API_BASE = `${API_BASE_URL}/api/data`;
+const USER_API = `${API_BASE_URL}/api/users`;
 
 export default function RealtimeDamStatus() {
   const { damId } = useParams();

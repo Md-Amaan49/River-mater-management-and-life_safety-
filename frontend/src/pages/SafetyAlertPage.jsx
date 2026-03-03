@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import "../styles/SafetyAlertPage.css";
+import API_BASE_URL from "../config";
 
-const API_URL = "http://localhost:5000";
+const API_URL = API_BASE_URL;
 
 const SafetyAlertPage = () => {
   const { damId } = useParams();

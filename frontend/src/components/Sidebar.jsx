@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/Sidebar.css";
+import API_BASE_URL from "../config";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = `${API_BASE_URL}/api`;
 
 export default function Sidebar({ onOpenPanel }) {
   const [collapsed, setCollapsed] = useState(false);

@@ -2,8 +2,9 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import "../styles/WaterUsage.css";
+import API_BASE_URL from "../config";
 
-const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api/water-usage";
+const API_BASE = `${API_BASE_URL}/api/water-usage`;
 
 const emptyUsage = {
   irrigation: 0,

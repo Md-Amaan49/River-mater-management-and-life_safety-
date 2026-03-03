@@ -11,7 +11,9 @@ export const useSearch = () => {
   return context;
 };
 
-const BASE_API = "https://river-water-management-and-life-safety.onrender.com/api";
+import API_BASE_URL from "../config";
+
+const BASE_API = `${API_BASE_URL}/api`;
 const DATA_API = `${BASE_API}/data`;
 
 export const SearchProvider = ({ children }) => {

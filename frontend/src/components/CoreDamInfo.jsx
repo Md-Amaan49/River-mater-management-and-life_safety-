@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import "../styles/CoreDamInfo.css";
+import API_BASE_URL from "../config";
 
 const CoreDamInfo = () => {
   const { damId } = useParams();
@@ -40,7 +41,7 @@ const CoreDamInfo = () => {
   useEffect(() => {
     const fetchDamDetails = async () => {
       try {
-        const res = await axios.get(`https://river-water-management-and-life-safety.onrender.com/api/dam/core/${damId}`);
+        const res = await axios.get(`${API_BASE_URL}/api/dam/core/${damId}`);
         if (res.data) {
           // Flatten coordinates for easier form editing
           const data = {
@@ -78,10 +79,10 @@ const CoreDamInfo = () => {
     try {
       let res;
       if (isExisting) {
-        res = await axios.put(`https://river-water-management-and-life-safety.onrender.com/api/dam/core/${damId}`, payload);
+        res = await axios.put(`${API_BASE_URL}/api/dam/core/${damId}`, payload);
         setMessage("Dam information updated successfully.");
       } else {
-        res = await axios.post(`https://river-water-management-and-life-safety.onrender.com/api/dam/core/${damId}`, payload);
+        res = await axios.post(`${API_BASE_URL}/api/dam/core/${damId}`, payload);
         setIsExisting(true);
         setMessage("Dam information saved successfully.");
       }

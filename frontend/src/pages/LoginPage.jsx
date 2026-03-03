@@ -53,7 +53,7 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post("https://river-water-management-and-life-safety.onrender.com/api/users/login", {
+      const res = await axios.post(`${API_BASE_URL}/api/users/login`, {
         email: email.trim(),
         password,
       });

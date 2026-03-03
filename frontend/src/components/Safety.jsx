@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import "../styles/Safety.css";
+import API_BASE_URL from "../config";
 
-const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api/safety";
+const API_BASE = `${API_BASE_URL}/api/safety`;
 
 export default function Safety() {
   const { damId } = useParams();

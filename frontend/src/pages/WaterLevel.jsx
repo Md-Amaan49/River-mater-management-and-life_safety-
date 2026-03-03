@@ -4,9 +4,10 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import "../styles/WaterLevel.css";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "../config";
 
-const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api/data"; // states/rivers/dams/status endpoints
-const USER_API = "https://river-water-management-and-life-safety.onrender.com/api/users"; // saved-dams endpoints
+const API_BASE = `${API_BASE_URL}/api/data`; // states/rivers/dams/status endpoints
+const USER_API = `${API_BASE_URL}/api/users`; // saved-dams endpoints
 
 // Helper: clamp 0..100
 const clampPct = (v) => {

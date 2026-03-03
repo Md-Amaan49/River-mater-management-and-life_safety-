@@ -30,7 +30,7 @@ const ProfilePage = () => {
         return; // not logged in
       }
 
-      const res = await axios.get("https://river-water-management-and-life-safety.onrender.com/api/users/profile", {
+      const res = await axios.get(`${API_BASE_URL}/api/users/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -95,7 +95,7 @@ const ProfilePage = () => {
         <img
           src={
             user.profileImage
-              ? `https://river-water-management-and-life-safety.onrender.com${user.profileImage}`
+              ? `${API_BASE_URL}${user.profileImage}`
               : "/default-avatar.png"
           }
           alt="Profile"

@@ -7,7 +7,9 @@ import { useNavigate } from "react-router-dom";
 import "../styles/WaterFlowPage.css"; // You can rename to RiverMapPage.css if you want
 
 // Base API for backend
-const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api";
+import API_BASE_URL from "../config";
+
+const API_BASE = `${API_BASE_URL}/api`;
 const DAM_API = `${API_BASE}/dam`;
 const DATA_API = `${API_BASE}/data`;
 const USER_API = `${API_BASE}/users`;

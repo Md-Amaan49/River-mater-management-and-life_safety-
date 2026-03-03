@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/AlertDashboard.css";
+import API_BASE_URL from "../config";
 
-const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api";
+const API_BASE = `${API_BASE_URL}/api`;
 
 export default function TestAlertDashboard() {
   const navigate = useNavigate();

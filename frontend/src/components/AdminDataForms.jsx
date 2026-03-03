@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import "../styles/AdminDataForms.css";
+import API_BASE_URL from "../config";
 
-const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api";
+const API_BASE = `${API_BASE_URL}/api`;
 
 export default function AdminDataForms() {
   const { damId } = useParams();

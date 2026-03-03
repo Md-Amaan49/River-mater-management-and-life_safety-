@@ -4,7 +4,7 @@ import axios from "axios";
 
 export const AuthContext = createContext();
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://river-water-management-and-life-safety.onrender.com';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); // will store {name, email, role, token}

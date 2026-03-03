@@ -3,8 +3,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/Features.css";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "../config";
 
-const API_BASE = "https://river-water-management-and-life-safety.onrender.com/api";
+const API_BASE = `${API_BASE_URL}/api`;
 const USER_API = `${API_BASE}/users`;
 
 const Features = ({ damId, token }) => {

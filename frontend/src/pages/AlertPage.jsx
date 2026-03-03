@@ -2,8 +2,9 @@ import React, { useEffect, useMemo, useState, useRef } from "react";
 import axios from "axios";
 import "../styles/AlertPage.css";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "../config";
 
-const BASE_API = "https://river-water-management-and-life-safety.onrender.com/api";     // server base
+const BASE_API = `${API_BASE_URL}/api`;     // server base
 const DATA_API = `${BASE_API}/data`;               // states/rivers/dams endpoints
 const USER_API = `${BASE_API}/users`;              // saved-dams endpoint
 const SAFETY_API = `${BASE_API}/safety`;           // safety endpoints

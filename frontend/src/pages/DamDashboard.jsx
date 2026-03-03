@@ -19,12 +19,13 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import "../styles/DamDashboard.css";
+import API_BASE_URL from "../config";
 
-const DAM_API = "https://river-water-management-and-life-safety.onrender.com/api/dam";
-const DATA_API = "https://river-water-management-and-life-safety.onrender.com/api/data";
-const USAGE_API = "https://river-water-management-and-life-safety.onrender.com/api/water-usage";
-const SENSORS_API = "https://river-water-management-and-life-safety.onrender.com/api/sensors";
-const USER_API = "https://river-water-management-and-life-safety.onrender.com/api/users";
+const DAM_API = `${API_BASE_URL}/api/dam`;
+const DATA_API = `${API_BASE_URL}/api/data`;
+const USAGE_API = `${API_BASE_URL}/api/water-usage`;
+const SENSORS_API = `${API_BASE_URL}/api/sensors`;
+const USER_API = `${API_BASE_URL}/api/users`;
 
 // Compact Card
 const Card = ({ title, children, className = "" }) => (

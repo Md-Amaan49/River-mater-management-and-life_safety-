@@ -3,8 +3,9 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import "../styles/SensorManagement.css";
 import { useNavigate, useParams } from "react-router-dom";
+import API_BASE_URL from "../config";
 
-const API = "https://river-water-management-and-life-safety.onrender.com/api/sensors";
+const API = `${API_BASE_URL}/api/sensors`;
 
 export default function SensorManagement() {
   // If you navigate to /sensors/:damId you can manage sensors for a dam
