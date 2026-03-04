@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../styles/ProfilePage.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "../config";
 import {
   FaUser,
   FaEdit,

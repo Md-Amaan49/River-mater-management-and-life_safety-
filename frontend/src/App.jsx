@@ -38,6 +38,7 @@ import GateSpillway from "./pages/GateSpillway";
 import DownstreamRisk from "./pages/DownstreamRisk";
 import BasinAggregated from "./pages/BasinAggregated";
 import SafetyAlertPage from "./pages/SafetyAlertPage";
+import AdvancedFeatures from "./pages/AdvancedFeatures";
 
 
 function App() {
@@ -86,7 +87,7 @@ function App() {
         <Route path="/safety-alert/:damId" element={<Layout><SafetyAlertPage /></Layout>} />
         <Route path="/sensors/:damId" element={<Layout><SensorManagement /></Layout>} />
         <Route path="/supporting-info/:damId" element={<Layout><SupportingInfo /></Layout>} />
-        <Route path="/features/:damId" element={<Features />} />
+        <Route path="/features/:damId" element={<AdvancedFeatures />} />
         
         {/* New Dam Data Routes */}
         <Route path="/reservoir-geometry/:damId" element={<Layout><ReservoirGeometry /></Layout>} />
