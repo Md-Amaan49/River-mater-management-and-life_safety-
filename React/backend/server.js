@@ -26,7 +26,7 @@ const __dirname = path.dirname(__filename);
 
 // 🔴 REPLACE WITH YOUR REAL RTSP DETAILS
 const RTSP_URL =
-  "rtsp://Apadamitra:Mgm@1234@172.28.135.37:554/stream2";
+  "rtsp://Apadamitra:Mgm@1234@10.156.229.37:554/stream2";
 
 app.get("/live", (req, res) => {
   console.log("📹 Client connected to live stream");
